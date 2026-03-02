@@ -64,7 +64,6 @@ fun SimpleListExample() {
                 Text(text = "Vertical list.")
                 Button(onClick = {}) { Text(text = "Button") }
             }
-
         }
     }
 }
