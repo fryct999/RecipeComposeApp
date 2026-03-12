@@ -24,8 +24,8 @@ object Dimens {
 
     val buttonWidth = 162.dp
     val buttonHeight = 36.dp
-
-    val radiusDefault  = 8.dp
+    val buttonSpacer = 4.dp
+    val shapeDefault  = 8.dp
     val shadow = 4.dp
 
     val sliderWidth = 328.dp
