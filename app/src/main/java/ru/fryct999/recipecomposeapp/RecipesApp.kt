@@ -1,18 +1,16 @@
 package ru.fryct999.recipecomposeapp
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import ru.fryct999.recipecomposeapp.ui.categories.CategoriesScreen
 import ru.fryct999.recipecomposeapp.ui.theme.RecipeComposeAppTheme
 
 @Composable
 fun RecipesApp() {
     RecipeComposeAppTheme {
         Scaffold { paddingValues ->
-            Text("Recipes App", modifier = Modifier.padding(paddingValues))
+            CategoriesScreen(contentPadding = paddingValues)
         }
     }
 }
