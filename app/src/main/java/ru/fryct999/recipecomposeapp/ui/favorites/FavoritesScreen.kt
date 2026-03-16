@@ -1,4 +1,4 @@
-package ru.fryct999.recipecomposeapp.ui.categories
+package ru.fryct999.recipecomposeapp.ui.favorites
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -9,14 +9,14 @@ import ru.fryct999.recipecomposeapp.R
 import ru.fryct999.recipecomposeapp.core.ui.ScreenHeader
 
 @Composable
-fun CategoriesScreen(
+fun FavoritesScreen(
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
     ScreenHeader(
-        painter = painterResource(id = R.drawable.img_ervar2),
-        contentDescription = "Раздел категории",
-        text = "КАТЕГОРИИ",
+        painter = painterResource(id = R.drawable.bcg_favorites),
+        contentDescription = "Раздел избранное",
+        text = "ИЗБРАННОЕ",
         modifier = Modifier.padding(top = contentPadding.calculateTopPadding())
     )
 }
