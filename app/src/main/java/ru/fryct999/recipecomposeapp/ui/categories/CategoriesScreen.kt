@@ -10,7 +10,8 @@ import ru.fryct999.recipecomposeapp.ui.components.ScreenHeader
 
 @Composable
 fun CategoriesScreen(
-    contentPadding: PaddingValues
+    contentPadding: PaddingValues,
+    modifier: Modifier = Modifier,
 ) {
     ScreenHeader(
         painter = painterResource(id = R.drawable.img_ervar2),

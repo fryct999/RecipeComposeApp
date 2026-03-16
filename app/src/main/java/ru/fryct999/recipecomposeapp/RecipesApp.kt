@@ -30,17 +30,9 @@ fun RecipesApp() {
                 )
             },
         ) { paddingValues ->
-            CategoriesScreen(contentPadding = paddingValues)
             when (currentScreenId) {
                 ScreenId.CATEGORIES -> {
-                    Box(
-                        modifier = Modifier
-                            .padding(paddingValues)
-                            .fillMaxSize(),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Text("Экран категории")
-                    }
+                    CategoriesScreen(contentPadding = paddingValues)
                 }
 
                 ScreenId.FAVORITES -> {
