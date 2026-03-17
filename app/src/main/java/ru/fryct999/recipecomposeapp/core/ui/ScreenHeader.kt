@@ -1,4 +1,4 @@
-package ru.fryct999.recipecomposeapp.ui.components
+package ru.fryct999.recipecomposeapp.core.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box

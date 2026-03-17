@@ -18,6 +18,7 @@ object Dimens {
     val categoryImgHeight = 156.dp
     val recipeImgWidth = 328.dp
     val recipeImgHeight = 100.dp
+    val recipeItemHeight = 132.dp
 
     val favoriteImgSmallSize = 24.dp
     val favoriteImgBigSize = 40.dp
