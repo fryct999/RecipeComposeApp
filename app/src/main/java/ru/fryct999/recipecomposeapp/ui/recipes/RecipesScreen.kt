@@ -1,6 +1,7 @@
 package ru.fryct999.recipecomposeapp.ui.recipes
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -19,20 +20,25 @@ fun RecipesScreen(
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
-    ScreenHeader(
-        painter = painterResource(id = R.drawable.bcg_recipes_list),
-        contentDescription = "Раздел рецепты",
-        text = "РЕЦЕПТЫ",
-        modifier = Modifier.padding(top = contentPadding.calculateTopPadding())
-    )
-
-    Box(
+    Column(
         modifier = Modifier
-            .padding(contentPadding)
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center,
+            .padding(top = contentPadding.calculateTopPadding())
+            .then(modifier)
     ) {
-        Text("Скоро здесь будет список рецептов")
+        ScreenHeader(
+            painter = painterResource(id = R.drawable.bcg_recipes_list),
+            contentDescription = "Раздел рецепты",
+            text = "РЕЦЕПТЫ",
+        )
+
+        Box(
+            modifier = Modifier
+                .padding(contentPadding)
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text("Скоро здесь будет список рецептов")
+        }
     }
 }
 

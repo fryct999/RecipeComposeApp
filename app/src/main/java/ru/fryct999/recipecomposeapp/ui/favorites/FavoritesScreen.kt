@@ -17,6 +17,8 @@ fun FavoritesScreen(
         painter = painterResource(id = R.drawable.bcg_favorites),
         contentDescription = "Раздел избранное",
         text = "ИЗБРАННОЕ",
-        modifier = Modifier.padding(top = contentPadding.calculateTopPadding())
+        modifier = Modifier
+            .padding(top = contentPadding.calculateTopPadding())
+            .then(modifier)
     )
 }
