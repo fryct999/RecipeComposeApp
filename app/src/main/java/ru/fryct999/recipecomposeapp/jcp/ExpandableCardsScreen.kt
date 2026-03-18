@@ -45,7 +45,6 @@ class ExpandableCardsActivity : ComponentActivity() {
     }
 }
 
-
 @Composable
 fun ExpandableCardsExample() {
     val items = List(5) { "Position №${it + 1}" }
