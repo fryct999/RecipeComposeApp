@@ -14,7 +14,7 @@ class IngredientDTOToUiModelTest {
         )
 
         val result = IngredientUiModel(
-            quantity = "1.0",
+            amount = "1.0",
             unitOfMeasure = "шт.",
             name = "Test ingredient",
         )

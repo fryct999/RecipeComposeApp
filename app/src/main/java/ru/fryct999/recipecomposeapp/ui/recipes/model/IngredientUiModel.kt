@@ -6,12 +6,12 @@ import ru.fryct999.recipecomposeapp.data.model.IngredientDto
 @Immutable
 data class IngredientUiModel(
     val name: String,
-    val quantity: String,
+    val amount: String,
     val unitOfMeasure: String,
 )
 
 fun IngredientDto.toUiModel() = IngredientUiModel(
     name = description,
-    quantity = quantity,
+    amount = quantity,
     unitOfMeasure = unitOfMeasure,
 )
