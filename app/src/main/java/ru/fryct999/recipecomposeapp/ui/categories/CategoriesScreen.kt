@@ -20,7 +20,7 @@ import ru.fryct999.recipecomposeapp.ui.theme.RecipeComposeAppTheme
 
 @Composable
 fun CategoriesScreen(
-    onCategoryClick: (Int) -> Unit,
+    onCategoryClick: (Int, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val categories = remember {
@@ -45,7 +45,7 @@ fun CategoriesScreen(
             items(categories) { category ->
                 CategoryItem(
                     category = category,
-                    onClick = { onCategoryClick(category.id) },
+                    onClick = { onCategoryClick(category.id, category.title) },
                 )
             }
         }
@@ -56,6 +56,6 @@ fun CategoriesScreen(
 @Composable
 fun CategoriesScreenPreview() {
     RecipeComposeAppTheme {
-        CategoriesScreen({})
+        CategoriesScreen({} as (Int, String) -> Unit)
     }
 }

@@ -2,42 +2,77 @@ package ru.fryct999.recipecomposeapp.ui.recipes
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import ru.fryct999.recipecomposeapp.R
 import ru.fryct999.recipecomposeapp.core.ui.ScreenHeader
+import ru.fryct999.recipecomposeapp.data.repository.RecipesRepositoryStub.getRecipesByCategoryId
+import ru.fryct999.recipecomposeapp.ui.recipes.model.RecipeUiModel
+import ru.fryct999.recipecomposeapp.ui.recipes.model.toUiModel
+import ru.fryct999.recipecomposeapp.ui.theme.Dimens.padding16
+import ru.fryct999.recipecomposeapp.ui.theme.Dimens.padding8
 import ru.fryct999.recipecomposeapp.ui.theme.RecipeComposeAppTheme
 
 @Composable
 fun RecipesScreen(
-    contentPadding: PaddingValues,
+    categoryId: Int?,
+    categoryTitle: String?,
     modifier: Modifier = Modifier,
 ) {
+    var recipes by remember { mutableStateOf<List<RecipeUiModel>>(emptyList()) }
+    var isLoading by remember { mutableStateOf(false) }
+
+    LaunchedEffect(categoryId) {
+        isLoading = true
+
+        try {
+            categoryId?.let {
+                recipes = getRecipesByCategoryId(it).map { dto -> dto.toUiModel() }
+            }
+        } finally {
+            isLoading = false
+        }
+    }
+
     Column(
-        modifier = Modifier
-            .padding(top = contentPadding.calculateTopPadding())
-            .then(modifier)
+        modifier = modifier
     ) {
         ScreenHeader(
             painter = painterResource(id = R.drawable.bcg_recipes_list),
-            contentDescription = "Раздел рецепты",
-            text = "РЕЦЕПТЫ",
+            contentDescription = "Раздел с рецептами $categoryTitle",
+            text = categoryTitle ?: "",
         )
 
-        Box(
-            modifier = Modifier
-                .padding(contentPadding)
-                .fillMaxSize(),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text("Скоро здесь будет список рецептов")
+        if (isLoading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        } else {
+            LazyColumn {
+                items(recipes, key = { it.id }) { recipe ->
+                    RecipeItem(
+                        recipe = recipe,
+                        onClick = {},
+                        modifier = Modifier.padding(horizontal = padding16, vertical = padding8)
+                    )
+                }
+            }
         }
     }
 }
@@ -46,6 +81,6 @@ fun RecipesScreen(
 @Composable
 fun RecipesScreenPreview() {
     RecipeComposeAppTheme {
-        RecipesScreen(PaddingValues())
+        RecipesScreen(0, "Бургеры")
     }
 }

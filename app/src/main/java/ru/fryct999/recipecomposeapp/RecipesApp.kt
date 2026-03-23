@@ -13,10 +13,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import ru.fryct999.recipecomposeapp.ui.favorites.FavoritesScreen
 import ru.fryct999.recipecomposeapp.ui.navigation.BottomNavigation
-import ru.fryct999.recipecomposeapp.ui.recipes.RecipeItem
 import ru.fryct999.recipecomposeapp.ui.recipes.RecipesScreen
 import ru.fryct999.recipecomposeapp.ui.theme.Dimens.padding10
 import ru.fryct999.recipecomposeapp.ui.theme.RecipeComposeAppTheme
@@ -25,6 +23,8 @@ import ru.fryct999.recipecomposeapp.ui.theme.RecipeComposeAppTheme
 fun RecipesApp() {
     RecipeComposeAppTheme {
         var currentScreenId by remember { mutableStateOf(ScreenId.CATEGORIES) }
+        var selectedCategoryId by remember { mutableStateOf<Int?>(null) }
+        var selectedCategoryTitle by remember { mutableStateOf("") }
 
         Scaffold(
             bottomBar = {
@@ -37,7 +37,11 @@ fun RecipesApp() {
             when (currentScreenId) {
                 ScreenId.CATEGORIES -> {
                     CategoriesScreen(
-                        onCategoryClick = {},
+                        onCategoryClick = { categoryId, categoryTitle ->
+                            selectedCategoryId = categoryId
+                            selectedCategoryTitle = categoryTitle
+                            currentScreenId = ScreenId.RECIPES
+                        },
                         modifier = Modifier.padding(paddingValues)
                     )
                 }
@@ -53,18 +57,17 @@ fun RecipesApp() {
                                 .fillMaxSize()
                                 .padding(padding10),
                         ) {
-                            RecipeItem(
-                                text = "СПИСОК РЕЦЕПТОВ",
-                                contentDescription = "Страница списка рецептов",
-                                painter = painterResource(id = R.drawable.img_ervar2),
-                                { currentScreenId = ScreenId.RECIPES }
-                            )
+
                         }
                     }
                 }
 
                 ScreenId.RECIPES -> {
-                    RecipesScreen(contentPadding = paddingValues)
+                    RecipesScreen(
+                        categoryId = selectedCategoryId,
+                        categoryTitle = selectedCategoryTitle,
+                        modifier = Modifier.padding(paddingValues),
+                    )
                 }
             }
 
