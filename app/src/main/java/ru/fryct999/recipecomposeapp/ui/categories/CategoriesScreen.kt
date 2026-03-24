@@ -42,7 +42,7 @@ fun CategoriesScreen(
             horizontalArrangement = Arrangement.spacedBy(padding16),
             verticalArrangement = Arrangement.spacedBy(padding16),
         ) {
-            items(categories) { category ->
+            items(categories, key = { it.id }) { category ->
                 CategoryItem(
                     category = category,
                     onClick = { onCategoryClick(category.id) },

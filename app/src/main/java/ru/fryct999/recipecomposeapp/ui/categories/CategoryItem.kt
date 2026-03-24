@@ -59,7 +59,7 @@ fun CategoryItem(category: CategoryUiModel, onClick: () -> Unit, modifier: Modif
             Text(
                 text = category.title.uppercase(Locale.getDefault()),
                 color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
             )
 
