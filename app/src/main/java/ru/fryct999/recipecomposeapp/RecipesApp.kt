@@ -67,6 +67,7 @@ fun RecipesApp() {
                         categoryId = selectedCategoryId,
                         categoryTitle = selectedCategoryTitle,
                         modifier = Modifier.padding(paddingValues),
+                        onRecipeClick = {},
                     )
                 }
             }

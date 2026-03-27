@@ -31,6 +31,7 @@ fun RecipesScreen(
     categoryId: Int?,
     categoryTitle: String?,
     modifier: Modifier = Modifier,
+    onRecipeClick: (Int) -> Unit,
 ) {
     var recipes by remember { mutableStateOf<List<RecipeUiModel>>(emptyList()) }
     var isLoading by remember { mutableStateOf(false) }
@@ -64,11 +65,13 @@ fun RecipesScreen(
                 CircularProgressIndicator()
             }
         } else {
-            LazyColumn {
+            LazyColumn(
+                modifier = Modifier.weight(1f)
+            ) {
                 items(recipes, key = { it.id }) { recipe ->
                     RecipeItem(
                         recipe = recipe,
-                        onClick = {},
+                        onClick = { onRecipeClick(recipe.id) },
                         modifier = Modifier.padding(horizontal = padding16, vertical = padding8)
                     )
                 }
@@ -81,6 +84,6 @@ fun RecipesScreen(
 @Composable
 fun RecipesScreenPreview() {
     RecipeComposeAppTheme {
-        RecipesScreen(0, "Бургеры")
+        RecipesScreen(categoryId = 0, categoryTitle = "Бургеры", onRecipeClick = {})
     }
 }
