@@ -56,6 +56,6 @@ fun CategoriesScreen(
 @Composable
 fun CategoriesScreenPreview() {
     RecipeComposeAppTheme {
-        CategoriesScreen({} as (Int, String) -> Unit)
+        CategoriesScreen(onCategoryClick = { _, _ -> })
     }
 }
