@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    id("kotlin-parcelize")
 }
 
 android {
@@ -49,7 +50,6 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
     implementation(libs.androidx.graphics.shapes)
-    implementation(libs.androidx.navigation.compose)
     implementation(libs.navigation.compose)
 
     androidTestImplementation(libs.androidx.junit)
