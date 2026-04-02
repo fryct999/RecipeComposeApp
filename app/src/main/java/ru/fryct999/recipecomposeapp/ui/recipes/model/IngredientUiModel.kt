@@ -10,6 +10,7 @@ import ru.fryct999.recipecomposeapp.data.model.IngredientDto
 data class IngredientUiModel(
     val name: String,
     val amount: String,
+    val originalAmount: Double? = null,
     val unitOfMeasure: String,
 ) : Parcelable
 
@@ -17,4 +18,5 @@ fun IngredientDto.toUiModel() = IngredientUiModel(
     name = description,
     amount = quantity,
     unitOfMeasure = unitOfMeasure,
+    originalAmount = quantity.toDoubleOrNull()
 )
