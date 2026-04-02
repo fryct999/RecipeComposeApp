@@ -29,7 +29,11 @@ import ru.fryct999.recipecomposeapp.ui.theme.Dimens.shapeDefault
 import java.util.Locale
 
 @Composable
-fun CategoryItem(category: CategoryUiModel, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun CategoryItem(
+    category: CategoryUiModel,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val shape = RoundedCornerShape(shapeDefault)
 
     Card(
@@ -39,7 +43,7 @@ fun CategoryItem(category: CategoryUiModel, onClick: () -> Unit, modifier: Modif
         elevation = CardDefaults.cardElevation(defaultElevation = shadow),
         shape = shape,
 
-    ) {
+        ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(category.imageUrl)
