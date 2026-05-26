@@ -1,8 +1,10 @@
 package ru.fryct999.recipecomposeapp
 
+import android.content.Intent
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.tooling.preview.Preview
 import ru.fryct999.recipecomposeapp.ui.categories.CategoriesScreen
 import androidx.compose.ui.Modifier
@@ -11,7 +13,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import kotlinx.coroutines.delay
+import ru.fryct999.recipecomposeapp.data.repository.RecipesRepositoryStub.getRecipeById
+import ru.fryct999.recipecomposeapp.navigation.DEEP_LINK_SCHEME
 import ru.fryct999.recipecomposeapp.navigation.Destination
+import ru.fryct999.recipecomposeapp.navigation.PARAM_RECIPE_ID
 import ru.fryct999.recipecomposeapp.ui.details.RecipeDetailsScreen
 import ru.fryct999.recipecomposeapp.ui.favorites.FavoritesScreen
 import ru.fryct999.recipecomposeapp.ui.navigation.BottomNavigation
@@ -19,9 +25,26 @@ import ru.fryct999.recipecomposeapp.ui.recipes.RecipesScreen
 import ru.fryct999.recipecomposeapp.ui.theme.RecipeComposeAppTheme
 
 @Composable
-fun RecipesApp() {
+fun RecipesApp(deepLinkIntent: Intent?) {
     RecipeComposeAppTheme {
         val navController = rememberNavController()
+
+        LaunchedEffect(deepLinkIntent) {
+            deepLinkIntent?.data?.let { uri ->
+                val recipeId: Int? = when (uri.scheme) {
+                    DEEP_LINK_SCHEME ->
+                        if (uri.host == "recipe") uri.pathSegments.getOrNull(0)?.toIntOrNull() else null
+                    "https", "http" ->
+                        if (uri.pathSegments.getOrNull(0) == "recipe") uri.pathSegments.getOrNull(1)?.toIntOrNull() else null
+                    else -> null
+                }
+
+                if (recipeId != null) {
+                    delay(100)
+                    navController.navigate(Destination.RecipeDetails.createRoute(recipeId))
+                }
+            }
+        }
 
         Scaffold(
             bottomBar = {
@@ -71,27 +94,27 @@ fun RecipesApp() {
                         categoryId = categoryId,
                         categoryTitle = categoryTitle,
                         onRecipeClick = { recipeId ->
-                            navController.navigate(Destination.RecipesDetails.createRoute(categoryId, recipeId))
+                            navController.navigate(Destination.RecipeDetails.createRoute(recipeId))
                         },
                         modifier = Modifier.padding(paddingValues),
                     )
                 }
 
                 composable(
-                    route = Destination.RecipesDetails.route,
+                    route = Destination.RecipeDetails.route,
                     arguments = listOf(
-                        navArgument("categoryId") { type = NavType.IntType },
-                        navArgument("recipeId") { type = NavType.IntType },
-                    )
+                        navArgument(PARAM_RECIPE_ID) { type = NavType.IntType },
+                    ),
                 ) { backStackEntry ->
-                    val categoryId = backStackEntry.arguments?.getInt("categoryId") ?: 0
-                    val recipeId = backStackEntry.arguments?.getInt("recipeId") ?: 0
+                    val recipeId = backStackEntry.arguments?.getInt(PARAM_RECIPE_ID) ?: 0
+                    val recipe = getRecipeById(recipeId)
 
-                    RecipeDetailsScreen(
-                        recipeId = recipeId,
-                        categoryId = categoryId,
-                        modifier = Modifier.padding(paddingValues),
-                    )
+                    recipe?.let {
+                        RecipeDetailsScreen(
+                            recipeId = recipeId,
+                            modifier = Modifier.padding(paddingValues)
+                        )
+                    }
                 }
             }
         }
@@ -101,5 +124,5 @@ fun RecipesApp() {
 @Preview
 @Composable
 fun RecipesAppPreview() {
-    RecipesApp()
+    RecipesApp(null)
 }
