@@ -31,7 +31,7 @@ fun RecipesScreen(
     categoryId: Int?,
     categoryTitle: String?,
     modifier: Modifier = Modifier,
-    onRecipeClick: (Int, RecipeUiModel) -> Unit,
+    onRecipeClick: (Int) -> Unit,
 ) {
     var recipes by remember { mutableStateOf<List<RecipeUiModel>>(emptyList()) }
     var isLoading by remember { mutableStateOf(false) }
@@ -71,7 +71,7 @@ fun RecipesScreen(
                 items(recipes, key = { it.id }) { recipe ->
                     RecipeItem(
                         recipe = recipe,
-                        onClick = { onRecipeClick(recipe.id, recipe) },
+                        onClick = { onRecipeClick(recipe.id) },
                         modifier = Modifier.padding(horizontal = padding16, vertical = padding8)
                     )
                 }
@@ -84,6 +84,6 @@ fun RecipesScreen(
 @Composable
 fun RecipesScreenPreview() {
     RecipeComposeAppTheme {
-        RecipesScreen(categoryId = 0, categoryTitle = "Бургеры", onRecipeClick = { _, _ -> })
+        RecipesScreen(categoryId = 0, categoryTitle = "Бургеры", onRecipeClick = { _ -> })
     }
 }
