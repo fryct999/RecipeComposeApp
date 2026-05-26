@@ -251,7 +251,7 @@ fun InstructionsList(
         ) {
             instructions.forEachIndexed { index, item ->
                 Text(
-                    text = item,
+                    text = "${index + 1}. $item",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface
                 )
