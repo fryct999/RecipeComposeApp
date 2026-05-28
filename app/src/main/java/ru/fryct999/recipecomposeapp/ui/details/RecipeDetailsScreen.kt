@@ -36,6 +36,7 @@ import coil3.request.error
 import coil3.request.placeholder
 import ru.fryct999.recipecomposeapp.R
 import ru.fryct999.recipecomposeapp.core.ui.ScreenHeader
+import ru.fryct999.recipecomposeapp.core.utils.shareRecipe
 import ru.fryct999.recipecomposeapp.data.repository.RecipesRepositoryStub.getRecipeById
 import ru.fryct999.recipecomposeapp.ui.recipes.IngredientItem
 import ru.fryct999.recipecomposeapp.ui.recipes.model.IngredientUiModel
@@ -55,17 +56,17 @@ import kotlin.math.roundToInt
 @Composable
 fun RecipeDetailsScreen(
     recipeId: Int,
-    categoryId: Int,
     modifier: Modifier = Modifier,
 ) {
     var recipe by remember { mutableStateOf<RecipeUiModel?>(null) }
     var isLoading by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
-    LaunchedEffect(categoryId, recipeId) {
+    LaunchedEffect(recipeId) {
         isLoading = true
 
         try {
-            recipe = getRecipeById(categoryId, recipeId)?.toUiModel()
+            recipe = getRecipeById(recipeId)?.toUiModel()
 
         } finally {
             isLoading = false
@@ -99,6 +100,8 @@ fun RecipeDetailsScreen(
                 ),
                 contentDescription = "Описание рецепта ${recipeUiModel.title}",
                 text = recipeUiModel.title,
+                showShareButton = true,
+                onShareClick = { shareRecipe(context, recipeUiModel.id, recipeUiModel.title) },
             )
 
             PortionsSlider(
@@ -270,7 +273,6 @@ fun RecipeDetailsPreview() {
     RecipeComposeAppTheme {
         RecipeDetailsScreen(
             recipeId = 0,
-            categoryId = 0,
             modifier = Modifier,
         )
     }

@@ -135,7 +135,9 @@ object RecipesRepositoryStub {
         }
     }
 
-    fun getRecipeById(categoryId: Int, recipeId: Int): RecipeDto? {
-        return getRecipesByCategoryId(categoryId).firstOrNull { it.id == recipeId }
+    fun getRecipeById(recipeId: Int): RecipeDto? {
+        return getCategories().asSequence()
+            .map { it.id }
+            .firstNotNullOfOrNull { categoryId -> getRecipesByCategoryId(categoryId).firstOrNull { it.id == recipeId } }
     }
 }

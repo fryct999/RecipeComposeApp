@@ -19,6 +19,6 @@ fun FavoritesScreen(
         text = "ИЗБРАННОЕ",
         modifier = Modifier
             .padding(top = contentPadding.calculateTopPadding())
-            .then(modifier)
+            .then(modifier),
     )
 }
