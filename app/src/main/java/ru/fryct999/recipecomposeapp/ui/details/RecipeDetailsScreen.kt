@@ -60,7 +60,7 @@ fun RecipeDetailsScreen(
 ) {
     var recipe by remember { mutableStateOf<RecipeUiModel?>(null) }
     var isLoading by remember { mutableStateOf(false) }
-    val context = LocalContext.current  // ✅ Добавьте здесь
+    val context = LocalContext.current
 
     LaunchedEffect(recipeId) {
         isLoading = true
