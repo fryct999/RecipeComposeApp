@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -82,7 +83,8 @@ fun RecipeDetailsScreen(
         }
     } else {
         val recipeUiModel = recipe ?: return
-        var currentPortions by remember { mutableIntStateOf(1) }
+        var currentPortions by rememberSaveable { mutableIntStateOf(1) }
+        var isFavorite by rememberSaveable { mutableStateOf(false) }
 
         Column(
             verticalArrangement = Arrangement.spacedBy(padding10),
@@ -102,6 +104,9 @@ fun RecipeDetailsScreen(
                 text = recipeUiModel.title,
                 showShareButton = true,
                 onShareClick = { shareRecipe(context, recipeUiModel.id, recipeUiModel.title) },
+                showFavoriteButton = true,
+                isFavorite = isFavorite,
+                onFavoriteToggle = { isFavorite = it }
             )
 
             PortionsSlider(
@@ -110,7 +115,7 @@ fun RecipeDetailsScreen(
                 modifier = Modifier.padding(horizontal = padding16),
             )
 
-            val scaledIngredients = remember(currentPortions) {
+            val scaledIngredients = remember(recipeUiModel.ingredients, currentPortions) {
                 val multiplier = currentPortions.toDouble()
                 recipeUiModel.ingredients.map { ingredient ->
                     ingredient.copy(

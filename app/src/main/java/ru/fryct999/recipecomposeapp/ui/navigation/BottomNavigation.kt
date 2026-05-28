@@ -65,7 +65,7 @@ fun BottomNavigation(onCategoriesClick: () -> Unit, onFavoriteClick: () -> Unit)
                 )
 
                 Image(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_favorite_small),
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_favorite_empty),
                     contentDescription = "favorite",
                 )
             }
