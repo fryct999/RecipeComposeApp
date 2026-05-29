@@ -57,6 +57,8 @@ import kotlin.math.roundToInt
 @Composable
 fun RecipeDetailsScreen(
     recipeId: Int,
+    isFavorite: Boolean,
+    onFavoriteToggle: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var recipe by remember { mutableStateOf<RecipeUiModel?>(null) }
@@ -84,7 +86,6 @@ fun RecipeDetailsScreen(
     } else {
         val recipeUiModel = recipe ?: return
         var currentPortions by rememberSaveable { mutableIntStateOf(1) }
-        var isFavorite by rememberSaveable { mutableStateOf(false) }
 
         Column(
             verticalArrangement = Arrangement.spacedBy(padding10),
@@ -106,7 +107,7 @@ fun RecipeDetailsScreen(
                 onShareClick = { shareRecipe(context, recipeUiModel.id, recipeUiModel.title) },
                 showFavoriteButton = true,
                 isFavorite = isFavorite,
-                onFavoriteToggle = { isFavorite = it }
+                onFavoriteToggle = onFavoriteToggle,
             )
 
             PortionsSlider(
@@ -278,6 +279,8 @@ fun RecipeDetailsPreview() {
     RecipeComposeAppTheme {
         RecipeDetailsScreen(
             recipeId = 0,
+            isFavorite = false,
+            onFavoriteToggle = {},
             modifier = Modifier,
         )
     }
