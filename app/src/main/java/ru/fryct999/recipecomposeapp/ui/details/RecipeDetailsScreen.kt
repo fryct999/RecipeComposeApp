@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,6 +57,8 @@ import kotlin.math.roundToInt
 @Composable
 fun RecipeDetailsScreen(
     recipeId: Int,
+    isFavorite: Boolean,
+    onFavoriteToggle: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var recipe by remember { mutableStateOf<RecipeUiModel?>(null) }
@@ -82,7 +85,7 @@ fun RecipeDetailsScreen(
         }
     } else {
         val recipeUiModel = recipe ?: return
-        var currentPortions by remember { mutableIntStateOf(1) }
+        var currentPortions by rememberSaveable { mutableIntStateOf(1) }
 
         Column(
             verticalArrangement = Arrangement.spacedBy(padding10),
@@ -102,6 +105,9 @@ fun RecipeDetailsScreen(
                 text = recipeUiModel.title,
                 showShareButton = true,
                 onShareClick = { shareRecipe(context, recipeUiModel.id, recipeUiModel.title) },
+                showFavoriteButton = true,
+                isFavorite = isFavorite,
+                onFavoriteToggle = onFavoriteToggle,
             )
 
             PortionsSlider(
@@ -110,7 +116,7 @@ fun RecipeDetailsScreen(
                 modifier = Modifier.padding(horizontal = padding16),
             )
 
-            val scaledIngredients = remember(currentPortions) {
+            val scaledIngredients = remember(recipeUiModel.ingredients, currentPortions) {
                 val multiplier = currentPortions.toDouble()
                 recipeUiModel.ingredients.map { ingredient ->
                     ingredient.copy(
@@ -273,6 +279,8 @@ fun RecipeDetailsPreview() {
     RecipeComposeAppTheme {
         RecipeDetailsScreen(
             recipeId = 0,
+            isFavorite = false,
+            onFavoriteToggle = {},
             modifier = Modifier,
         )
     }

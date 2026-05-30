@@ -28,7 +28,7 @@ class RecipeDTOToUiModelTest {
             title = "Test recipe",
             ingredients = listOf(
                 IngredientUiModel(
-                    quantity = "1.0",
+                    amount = "1.0",
                     unitOfMeasure = "шт",
                     name = "Test ingredient",
                 )
