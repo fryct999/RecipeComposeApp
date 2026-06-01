@@ -35,7 +35,7 @@ fun FavoritesScreen(
     onRecipeClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val favoriteIds = favoritePrefsManager.getAllFavorites()
+    val favoriteIds = remember { favoritePrefsManager.getAllFavorites() }
     var recipes by remember { mutableStateOf<List<RecipeUiModel>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
 

@@ -31,10 +31,13 @@ import ru.fryct999.recipecomposeapp.ui.recipes.RecipesScreen
 import ru.fryct999.recipecomposeapp.ui.theme.RecipeComposeAppTheme
 
 @Composable
-fun RecipesApp(deepLinkIntent: Intent?) {
+fun RecipesApp(
+    deepLinkIntent: Intent?
+) {
     RecipeComposeAppTheme {
         val navController = rememberNavController()
-        val favoritePrefsManager = FavoritePrefsManager(LocalContext.current)
+        val context = LocalContext.current
+        val favoritePrefsManager = remember { FavoritePrefsManager(context) }
 
         LaunchedEffect(deepLinkIntent) {
             deepLinkIntent?.data?.let { uri ->
