@@ -20,7 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import ru.fryct999.recipecomposeapp.R
 import ru.fryct999.recipecomposeapp.core.ui.ScreenHeader
-import ru.fryct999.recipecomposeapp.core.utils.FavoritePrefsManager
+import ru.fryct999.recipecomposeapp.core.utils.FavoriteDataStoreManager
 import ru.fryct999.recipecomposeapp.data.repository.RecipesRepositoryStub.getRecipeById
 import ru.fryct999.recipecomposeapp.ui.recipes.RecipeItem
 import ru.fryct999.recipecomposeapp.ui.recipes.model.RecipeUiModel
@@ -31,18 +31,19 @@ import ru.fryct999.recipecomposeapp.ui.theme.RecipeComposeAppTheme
 
 @Composable
 fun FavoritesScreen(
-    favoritePrefsManager: FavoritePrefsManager,
+    favoriteDataStoreManager: FavoriteDataStoreManager,
     onRecipeClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val favoriteIds = remember { favoritePrefsManager.getAllFavorites() }
+    var favoriteIds by remember { mutableStateOf<Set<String>>(emptySet()) }
     var recipes by remember { mutableStateOf<List<RecipeUiModel>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
 
-    LaunchedEffect(favoriteIds) {
+    LaunchedEffect(Unit) {
         isLoading = true
 
         try {
+            favoriteIds = favoriteDataStoreManager.getAllFavorites()
             recipes = favoriteIds.mapNotNull { id ->
                 getRecipeById(id.toIntOrNull() ?: return@mapNotNull null)?.toUiModel()
             }
@@ -87,7 +88,7 @@ fun FavoritesScreen(
 fun PreviewFavoritesScreen() {
     RecipeComposeAppTheme {
         FavoritesScreen(
-            favoritePrefsManager = FavoritePrefsManager(LocalContext.current),
+            favoriteDataStoreManager = FavoriteDataStoreManager(LocalContext.current),
             onRecipeClick = { _ -> },
             modifier = Modifier,
         )
