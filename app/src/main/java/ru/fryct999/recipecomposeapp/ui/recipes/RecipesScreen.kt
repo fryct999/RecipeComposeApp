@@ -84,6 +84,10 @@ fun RecipesScreen(
 @Composable
 fun RecipesScreenPreview() {
     RecipeComposeAppTheme {
-        RecipesScreen(categoryId = 0, categoryTitle = "Бургеры", onRecipeClick = { _ -> })
+        RecipesScreen(
+            categoryId = 0,
+            categoryTitle = "Бургеры",
+            onRecipeClick = { _ -> },
+        )
     }
 }

@@ -7,17 +7,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
 import ru.fryct999.recipecomposeapp.ui.categories.CategoriesScreen
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import kotlinx.coroutines.delay
+import ru.fryct999.recipecomposeapp.core.utils.FavoritePrefsManager
 import ru.fryct999.recipecomposeapp.data.repository.RecipesRepositoryStub.getRecipeById
 import ru.fryct999.recipecomposeapp.navigation.DEEP_LINK_SCHEME
 import ru.fryct999.recipecomposeapp.navigation.Destination
@@ -29,17 +31,25 @@ import ru.fryct999.recipecomposeapp.ui.recipes.RecipesScreen
 import ru.fryct999.recipecomposeapp.ui.theme.RecipeComposeAppTheme
 
 @Composable
-fun RecipesApp(deepLinkIntent: Intent?) {
+fun RecipesApp(
+    deepLinkIntent: Intent?
+) {
     RecipeComposeAppTheme {
         val navController = rememberNavController()
+        val context = LocalContext.current
+        val favoritePrefsManager = remember { FavoritePrefsManager(context) }
 
         LaunchedEffect(deepLinkIntent) {
             deepLinkIntent?.data?.let { uri ->
                 val recipeId: Int? = when (uri.scheme) {
                     DEEP_LINK_SCHEME ->
-                        if (uri.host == "recipe") uri.pathSegments.getOrNull(0)?.toIntOrNull() else null
+                        if (uri.host == "recipe") uri.pathSegments.getOrNull(0)
+                            ?.toIntOrNull() else null
+
                     "https", "http" ->
-                        if (uri.pathSegments.getOrNull(0) == "recipe") uri.pathSegments.getOrNull(1)?.toIntOrNull() else null
+                        if (uri.pathSegments.getOrNull(0) == "recipe") uri.pathSegments.getOrNull(1)
+                            ?.toIntOrNull() else null
+
                     else -> null
                 }
 
@@ -67,7 +77,13 @@ fun RecipesApp(deepLinkIntent: Intent?) {
                 startDestination = Destination.Categories.route,
             ) {
                 composable(route = Destination.Favorite.route) {
-                    FavoritesScreen(contentPadding = paddingValues)
+                    FavoritesScreen(
+                        favoritePrefsManager = favoritePrefsManager,
+                        onRecipeClick = { recipeId ->
+                            navController.navigate(Destination.RecipeDetails.createRoute(recipeId))
+                        },
+                        modifier = Modifier.padding(paddingValues),
+                    )
                 }
 
                 composable(route = Destination.Categories.route) {
@@ -112,13 +128,19 @@ fun RecipesApp(deepLinkIntent: Intent?) {
                 ) { backStackEntry ->
                     val recipeId = backStackEntry.arguments?.getInt(PARAM_RECIPE_ID) ?: 0
                     val recipe = getRecipeById(recipeId)
-                    var isFavorite by rememberSaveable { mutableStateOf(false) }
+                    var isFavorite by remember(recipeId) {
+                        mutableStateOf(favoritePrefsManager.isFavorite(recipeId))
+                    }
 
                     recipe?.let {
                         RecipeDetailsScreen(
                             recipeId = recipeId,
                             isFavorite = isFavorite,
-                            onFavoriteToggle = { isFavorite = it },
+                            onFavoriteToggle = {
+                                if (it) favoritePrefsManager.addToFavorites(recipeId)
+                                else favoritePrefsManager.removeFromFavorites(recipeId)
+                                isFavorite = it
+                            },
                             modifier = Modifier.padding(paddingValues)
                         )
                     }
