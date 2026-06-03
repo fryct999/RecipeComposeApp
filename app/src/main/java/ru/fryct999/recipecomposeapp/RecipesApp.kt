@@ -66,6 +66,7 @@ fun RecipesApp(
                     onFavoriteClick = {
                         navController.navigate(Destination.Favorite.route)
                     },
+                    favoriteDataStoreManager = favoriteDataStoreManager,
                 )
             },
         ) { paddingValues ->
