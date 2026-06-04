@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -35,8 +36,10 @@ import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
 import coil3.request.error
 import coil3.request.placeholder
+import kotlinx.coroutines.launch
 import ru.fryct999.recipecomposeapp.R
 import ru.fryct999.recipecomposeapp.core.ui.ScreenHeader
+import ru.fryct999.recipecomposeapp.core.utils.FavoriteDataStoreManager
 import ru.fryct999.recipecomposeapp.core.utils.shareRecipe
 import ru.fryct999.recipecomposeapp.data.repository.RecipesRepositoryStub.getRecipeById
 import ru.fryct999.recipecomposeapp.ui.recipes.IngredientItem
@@ -57,12 +60,13 @@ import kotlin.math.roundToInt
 @Composable
 fun RecipeDetailsScreen(
     recipeId: Int,
-    isFavorite: Boolean,
-    onFavoriteToggle: (Boolean) -> Unit,
+    favoriteDataStoreManager: FavoriteDataStoreManager,
     modifier: Modifier = Modifier,
 ) {
+    val coroutineScope = rememberCoroutineScope()
     var recipe by remember { mutableStateOf<RecipeUiModel?>(null) }
     var isLoading by remember { mutableStateOf(false) }
+    var isFavorite by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     LaunchedEffect(recipeId) {
@@ -70,7 +74,7 @@ fun RecipeDetailsScreen(
 
         try {
             recipe = getRecipeById(recipeId)?.toUiModel()
-
+            isFavorite = favoriteDataStoreManager.isFavorite(recipeId)
         } finally {
             isLoading = false
         }
@@ -107,7 +111,16 @@ fun RecipeDetailsScreen(
                 onShareClick = { shareRecipe(context, recipeUiModel.id, recipeUiModel.title) },
                 showFavoriteButton = true,
                 isFavorite = isFavorite,
-                onFavoriteToggle = onFavoriteToggle,
+                onFavoriteToggle = {
+                    coroutineScope.launch {
+                        if (isFavorite) {
+                            favoriteDataStoreManager.removeFavorite(recipeId)
+                        } else {
+                            favoriteDataStoreManager.addFavorite(recipeId)
+                        }
+                        isFavorite = !isFavorite
+                    }
+                },
             )
 
             PortionsSlider(
@@ -279,8 +292,7 @@ fun RecipeDetailsPreview() {
     RecipeComposeAppTheme {
         RecipeDetailsScreen(
             recipeId = 0,
-            isFavorite = false,
-            onFavoriteToggle = {},
+            favoriteDataStoreManager = FavoriteDataStoreManager(LocalContext.current),
             modifier = Modifier,
         )
     }

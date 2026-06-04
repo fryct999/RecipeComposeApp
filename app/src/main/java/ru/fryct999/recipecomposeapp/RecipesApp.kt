@@ -5,10 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
 import ru.fryct999.recipecomposeapp.ui.categories.CategoriesScreen
 import androidx.compose.ui.Modifier
@@ -19,7 +16,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import kotlinx.coroutines.delay
-import ru.fryct999.recipecomposeapp.core.utils.FavoritePrefsManager
+import ru.fryct999.recipecomposeapp.core.utils.FavoriteDataStoreManager
 import ru.fryct999.recipecomposeapp.data.repository.RecipesRepositoryStub.getRecipeById
 import ru.fryct999.recipecomposeapp.navigation.DEEP_LINK_SCHEME
 import ru.fryct999.recipecomposeapp.navigation.Destination
@@ -37,7 +34,7 @@ fun RecipesApp(
     RecipeComposeAppTheme {
         val navController = rememberNavController()
         val context = LocalContext.current
-        val favoritePrefsManager = remember { FavoritePrefsManager(context) }
+        val favoriteDataStoreManager = remember { FavoriteDataStoreManager(context) }
 
         LaunchedEffect(deepLinkIntent) {
             deepLinkIntent?.data?.let { uri ->
@@ -78,7 +75,7 @@ fun RecipesApp(
             ) {
                 composable(route = Destination.Favorite.route) {
                     FavoritesScreen(
-                        favoritePrefsManager = favoritePrefsManager,
+                        favoriteDataStoreManager = favoriteDataStoreManager,
                         onRecipeClick = { recipeId ->
                             navController.navigate(Destination.RecipeDetails.createRoute(recipeId))
                         },
@@ -128,19 +125,11 @@ fun RecipesApp(
                 ) { backStackEntry ->
                     val recipeId = backStackEntry.arguments?.getInt(PARAM_RECIPE_ID) ?: 0
                     val recipe = getRecipeById(recipeId)
-                    var isFavorite by remember(recipeId) {
-                        mutableStateOf(favoritePrefsManager.isFavorite(recipeId))
-                    }
 
                     recipe?.let {
                         RecipeDetailsScreen(
                             recipeId = recipeId,
-                            isFavorite = isFavorite,
-                            onFavoriteToggle = {
-                                if (it) favoritePrefsManager.addToFavorites(recipeId)
-                                else favoritePrefsManager.removeFromFavorites(recipeId)
-                                isFavorite = it
-                            },
+                            favoriteDataStoreManager = favoriteDataStoreManager,
                             modifier = Modifier.padding(paddingValues)
                         )
                     }

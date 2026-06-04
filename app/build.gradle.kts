@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.coil.core)
     implementation(libs.androidx.graphics.shapes)
     implementation(libs.navigation.compose)
+    implementation(libs.androidx.datastore.preferences)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
