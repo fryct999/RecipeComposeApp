@@ -7,23 +7,37 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Badge
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import ru.fryct999.recipecomposeapp.R
+import ru.fryct999.recipecomposeapp.core.utils.FavoriteDataStoreManager
 import ru.fryct999.recipecomposeapp.ui.theme.Dimens.buttonSpacer
 import ru.fryct999.recipecomposeapp.ui.theme.Dimens.padding10
 import ru.fryct999.recipecomposeapp.ui.theme.Dimens.shapeDefault
 import ru.fryct999.recipecomposeapp.ui.theme.RecipeComposeAppTheme
 
 @Composable
-fun BottomNavigation(onCategoriesClick: () -> Unit, onFavoriteClick: () -> Unit) {
+fun BottomNavigation(
+    onCategoriesClick: () -> Unit,
+    onFavoriteClick: () -> Unit,
+    favoriteDataStoreManager: FavoriteDataStoreManager,
+) {
+    val favoriteCount by favoriteDataStoreManager
+        .getFavoriteCountFlow()
+        .collectAsState(initial = 0)
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -57,12 +71,22 @@ fun BottomNavigation(onCategoriesClick: () -> Unit, onFavoriteClick: () -> Unit)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceAround
+                horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = "ИЗБРАННОЕ",
                     style = MaterialTheme.typography.labelLarge,
                 )
+
+                if (favoriteCount > 0) {
+                    Badge {
+                        Text(
+                            text = "$favoriteCount",
+                            style = MaterialTheme.typography.labelLarge,
+                        )
+                    }
+                }
 
                 Image(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_favorite_empty),
@@ -77,6 +101,6 @@ fun BottomNavigation(onCategoriesClick: () -> Unit, onFavoriteClick: () -> Unit)
 @Composable
 fun BottomNavigationPreview() {
     RecipeComposeAppTheme {
-        BottomNavigation({}, {})
+        BottomNavigation({}, {}, FavoriteDataStoreManager(LocalContext.current))
     }
 }

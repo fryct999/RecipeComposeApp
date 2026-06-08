@@ -19,6 +19,7 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -66,15 +67,17 @@ fun RecipeDetailsScreen(
     val coroutineScope = rememberCoroutineScope()
     var recipe by remember { mutableStateOf<RecipeUiModel?>(null) }
     var isLoading by remember { mutableStateOf(false) }
-    var isFavorite by remember { mutableStateOf(false) }
     val context = LocalContext.current
+
+    val isFavorite by favoriteDataStoreManager
+        .isFavoriteFlow(recipeId)
+        .collectAsState(initial = false)
 
     LaunchedEffect(recipeId) {
         isLoading = true
 
         try {
             recipe = getRecipeById(recipeId)?.toUiModel()
-            isFavorite = favoriteDataStoreManager.isFavorite(recipeId)
         } finally {
             isLoading = false
         }
@@ -118,7 +121,6 @@ fun RecipeDetailsScreen(
                         } else {
                             favoriteDataStoreManager.addFavorite(recipeId)
                         }
-                        isFavorite = !isFavorite
                     }
                 },
             )

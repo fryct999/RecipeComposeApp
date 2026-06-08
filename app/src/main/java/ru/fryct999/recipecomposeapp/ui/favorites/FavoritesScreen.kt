@@ -1,19 +1,12 @@
 package ru.fryct999.recipecomposeapp.ui.favorites
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -23,7 +16,6 @@ import ru.fryct999.recipecomposeapp.core.ui.ScreenHeader
 import ru.fryct999.recipecomposeapp.core.utils.FavoriteDataStoreManager
 import ru.fryct999.recipecomposeapp.data.repository.RecipesRepositoryStub.getRecipeById
 import ru.fryct999.recipecomposeapp.ui.recipes.RecipeItem
-import ru.fryct999.recipecomposeapp.ui.recipes.model.RecipeUiModel
 import ru.fryct999.recipecomposeapp.ui.recipes.model.toUiModel
 import ru.fryct999.recipecomposeapp.ui.theme.Dimens.padding16
 import ru.fryct999.recipecomposeapp.ui.theme.Dimens.padding8
@@ -35,22 +27,14 @@ fun FavoritesScreen(
     onRecipeClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var favoriteIds by remember { mutableStateOf<Set<String>>(emptySet()) }
-    var recipes by remember { mutableStateOf<List<RecipeUiModel>>(emptyList()) }
-    var isLoading by remember { mutableStateOf(true) }
+    val favoriteIds by favoriteDataStoreManager
+        .getFavoriteIdsFlow()
+        .collectAsState(initial = emptySet())
 
-    LaunchedEffect(Unit) {
-        isLoading = true
-
-        try {
-            favoriteIds = favoriteDataStoreManager.getAllFavorites()
-            recipes = favoriteIds.mapNotNull { id ->
-                getRecipeById(id.toIntOrNull() ?: return@mapNotNull null)?.toUiModel()
-            }
-        } finally {
-            isLoading = false
-        }
+    val recipes = favoriteIds.mapNotNull { id ->
+        getRecipeById(id.toIntOrNull() ?: return@mapNotNull null)?.toUiModel()
     }
+
     Column(
         modifier = modifier
     ) {
@@ -60,26 +44,18 @@ fun FavoritesScreen(
             text = "ИЗБРАННОЕ",
         )
 
-        if (isLoading) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier.weight(1f)
-            ) {
-                items(recipes, key = { it.id }) { recipe ->
-                    RecipeItem(
-                        recipe = recipe,
-                        onClick = { onRecipeClick(recipe.id) },
-                        modifier = Modifier.padding(horizontal = padding16, vertical = padding8)
-                    )
-                }
+        LazyColumn(
+            modifier = Modifier.weight(1f)
+        ) {
+            items(recipes, key = { it.id }) { recipe ->
+                RecipeItem(
+                    recipe = recipe,
+                    onClick = { onRecipeClick(recipe.id) },
+                    modifier = Modifier.padding(horizontal = padding16, vertical = padding8)
+                )
             }
         }
+
     }
 }
 
