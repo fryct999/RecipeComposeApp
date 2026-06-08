@@ -17,6 +17,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import kotlinx.coroutines.delay
 import ru.fryct999.recipecomposeapp.core.utils.FavoriteDataStoreManager
+import ru.fryct999.recipecomposeapp.data.repository.RecipesRepositoryStub
 import ru.fryct999.recipecomposeapp.data.repository.RecipesRepositoryStub.getRecipeById
 import ru.fryct999.recipecomposeapp.navigation.DEEP_LINK_SCHEME
 import ru.fryct999.recipecomposeapp.navigation.Destination
@@ -77,6 +78,7 @@ fun RecipesApp(
                 composable(route = Destination.Favorite.route) {
                     FavoritesScreen(
                         favoriteDataStoreManager = favoriteDataStoreManager,
+                        recipesRepository = RecipesRepositoryStub,
                         onRecipeClick = { recipeId ->
                             navController.navigate(Destination.RecipeDetails.createRoute(recipeId))
                         },

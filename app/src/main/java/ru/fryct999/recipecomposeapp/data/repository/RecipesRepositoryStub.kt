@@ -4,7 +4,7 @@ import ru.fryct999.recipecomposeapp.data.model.CategoryDto
 import ru.fryct999.recipecomposeapp.data.model.IngredientDto
 import ru.fryct999.recipecomposeapp.data.model.RecipeDto
 
-object RecipesRepositoryStub {
+object RecipesRepositoryStub : RecipesRepository {
     private val categories = listOf(
         CategoryDto(
             id = 0,
@@ -135,9 +135,9 @@ object RecipesRepositoryStub {
         }
     }
 
-    fun getRecipeById(recipeId: Int): RecipeDto? {
+    override fun getRecipeById(id: Int): RecipeDto? {
         return getCategories().asSequence()
             .map { it.id }
-            .firstNotNullOfOrNull { categoryId -> getRecipesByCategoryId(categoryId).firstOrNull { it.id == recipeId } }
+            .firstNotNullOfOrNull { categoryId -> getRecipesByCategoryId(categoryId).firstOrNull { it.id == id } }
     }
 }
