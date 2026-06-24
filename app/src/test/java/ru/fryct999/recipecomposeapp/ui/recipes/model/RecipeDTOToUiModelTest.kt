@@ -4,6 +4,9 @@ import org.junit.Assert.*
 import org.junit.Test
 import ru.fryct999.recipecomposeapp.data.model.IngredientDto
 import ru.fryct999.recipecomposeapp.data.model.RecipeDto
+import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.IngredientUiModel
+import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.RecipeUiModel
+import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.toUiModel
 import ru.fryct999.recipecomposeapp.ui.Constants
 
 class RecipeDTOToUiModelTest {

@@ -3,6 +3,8 @@ package ru.fryct999.recipecomposeapp.ui.recipes.model
 import org.junit.Assert.*
 import org.junit.Test
 import ru.fryct999.recipecomposeapp.data.model.IngredientDto
+import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.IngredientUiModel
+import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.toUiModel
 
 class IngredientDTOToUiModelTest {
     @Test

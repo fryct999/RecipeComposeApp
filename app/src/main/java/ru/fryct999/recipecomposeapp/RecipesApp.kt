@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
-import ru.fryct999.recipecomposeapp.ui.categories.CategoriesScreen
+import ru.fryct999.recipecomposeapp.features.categories.ui.CategoriesScreen
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
@@ -22,10 +22,10 @@ import ru.fryct999.recipecomposeapp.data.repository.RecipesRepositoryStub.getRec
 import ru.fryct999.recipecomposeapp.navigation.DEEP_LINK_SCHEME
 import ru.fryct999.recipecomposeapp.navigation.Destination
 import ru.fryct999.recipecomposeapp.navigation.PARAM_RECIPE_ID
-import ru.fryct999.recipecomposeapp.ui.details.RecipeDetailsScreen
-import ru.fryct999.recipecomposeapp.ui.favorites.FavoritesScreen
+import ru.fryct999.recipecomposeapp.features.details.ui.RecipeDetailsScreen
+import ru.fryct999.recipecomposeapp.features.favorites.ui.FavoritesScreen
 import ru.fryct999.recipecomposeapp.ui.navigation.BottomNavigation
-import ru.fryct999.recipecomposeapp.ui.recipes.RecipesScreen
+import ru.fryct999.recipecomposeapp.features.recipes.ui.RecipesScreen
 import ru.fryct999.recipecomposeapp.ui.theme.RecipeComposeAppTheme
 
 @Composable

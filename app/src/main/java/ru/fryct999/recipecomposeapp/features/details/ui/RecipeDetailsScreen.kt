@@ -1,4 +1,4 @@
-package ru.fryct999.recipecomposeapp.ui.details
+package ru.fryct999.recipecomposeapp.features.details.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -43,10 +43,10 @@ import ru.fryct999.recipecomposeapp.core.ui.ScreenHeader
 import ru.fryct999.recipecomposeapp.core.utils.FavoriteDataStoreManager
 import ru.fryct999.recipecomposeapp.core.utils.shareRecipe
 import ru.fryct999.recipecomposeapp.data.repository.RecipesRepositoryStub.getRecipeById
-import ru.fryct999.recipecomposeapp.ui.recipes.IngredientItem
-import ru.fryct999.recipecomposeapp.ui.recipes.model.IngredientUiModel
-import ru.fryct999.recipecomposeapp.ui.recipes.model.RecipeUiModel
-import ru.fryct999.recipecomposeapp.ui.recipes.model.toUiModel
+import ru.fryct999.recipecomposeapp.features.recipes.ui.IngredientItem
+import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.IngredientUiModel
+import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.RecipeUiModel
+import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.toUiModel
 import ru.fryct999.recipecomposeapp.ui.theme.Dimens.padding10
 import ru.fryct999.recipecomposeapp.ui.theme.Dimens.padding16
 import ru.fryct999.recipecomposeapp.ui.theme.Dimens.padding8

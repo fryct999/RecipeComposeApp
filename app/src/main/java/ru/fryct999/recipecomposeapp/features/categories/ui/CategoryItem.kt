@@ -1,4 +1,4 @@
-package ru.fryct999.recipecomposeapp.ui.categories
+package ru.fryct999.recipecomposeapp.features.categories.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -22,11 +23,10 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import ru.fryct999.recipecomposeapp.R
 import ru.fryct999.recipecomposeapp.ui.Constants.DESCRIPTION_LINE_CATEGORY_ITEM
-import ru.fryct999.recipecomposeapp.ui.categories.model.CategoryUiModel
+import ru.fryct999.recipecomposeapp.features.categories.presentation.model.CategoryUiModel
 import ru.fryct999.recipecomposeapp.ui.theme.Dimens.padding8
 import ru.fryct999.recipecomposeapp.ui.theme.Dimens.shadow
 import ru.fryct999.recipecomposeapp.ui.theme.Dimens.shapeDefault
-import java.util.Locale
 
 @Composable
 fun CategoryItem(
@@ -61,7 +61,7 @@ fun CategoryItem(
             verticalArrangement = Arrangement.spacedBy(padding8),
         ) {
             Text(
-                text = category.title.uppercase(Locale.getDefault()),
+                text = category.title.uppercase(LocalConfiguration.current.locales[0]),
                 color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,

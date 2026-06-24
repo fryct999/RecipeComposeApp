@@ -1,4 +1,4 @@
-package ru.fryct999.recipecomposeapp.ui.recipes
+package ru.fryct999.recipecomposeapp.features.recipes.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,8 +20,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import ru.fryct999.recipecomposeapp.R
 import ru.fryct999.recipecomposeapp.core.ui.ScreenHeader
 import ru.fryct999.recipecomposeapp.data.repository.RecipesRepositoryStub.getRecipesByCategoryId
-import ru.fryct999.recipecomposeapp.ui.recipes.model.RecipeUiModel
-import ru.fryct999.recipecomposeapp.ui.recipes.model.toUiModel
+import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.RecipeUiModel
+import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.toUiModel
 import ru.fryct999.recipecomposeapp.ui.theme.Dimens.padding16
 import ru.fryct999.recipecomposeapp.ui.theme.Dimens.padding8
 import ru.fryct999.recipecomposeapp.ui.theme.RecipeComposeAppTheme

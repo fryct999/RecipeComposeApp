@@ -1,4 +1,4 @@
-package ru.fryct999.recipecomposeapp.ui.favorites
+package ru.fryct999.recipecomposeapp.features.favorites.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,8 +23,8 @@ import ru.fryct999.recipecomposeapp.core.ui.ScreenHeader
 import ru.fryct999.recipecomposeapp.core.utils.FavoriteDataStoreManager
 import ru.fryct999.recipecomposeapp.data.repository.RecipesRepository
 import ru.fryct999.recipecomposeapp.data.repository.RecipesRepositoryStub
-import ru.fryct999.recipecomposeapp.ui.recipes.RecipeItem
-import ru.fryct999.recipecomposeapp.ui.recipes.model.toUiModel
+import ru.fryct999.recipecomposeapp.features.recipes.ui.RecipeItem
+import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.toUiModel
 import ru.fryct999.recipecomposeapp.ui.theme.Dimens.padding16
 import ru.fryct999.recipecomposeapp.ui.theme.Dimens.padding8
 import ru.fryct999.recipecomposeapp.ui.theme.RecipeComposeAppTheme
