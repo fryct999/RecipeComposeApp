@@ -1,4 +1,4 @@
-package ru.fryct999.recipecomposeapp.ui.categories.model
+package ru.fryct999.recipecomposeapp.features.categories.presentation.model
 
 import androidx.compose.runtime.Immutable
 import ru.fryct999.recipecomposeapp.data.model.CategoryDto

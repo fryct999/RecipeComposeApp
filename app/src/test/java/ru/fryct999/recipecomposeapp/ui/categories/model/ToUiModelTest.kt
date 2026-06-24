@@ -3,6 +3,8 @@ package ru.fryct999.recipecomposeapp.ui.categories.model
 import org.junit.Assert.*
 import org.junit.Test
 import ru.fryct999.recipecomposeapp.data.model.CategoryDto
+import ru.fryct999.recipecomposeapp.features.categories.presentation.model.CategoryUiModel
+import ru.fryct999.recipecomposeapp.features.categories.presentation.model.toUiModel
 import ru.fryct999.recipecomposeapp.ui.Constants
 
 class ToUiModelTest {

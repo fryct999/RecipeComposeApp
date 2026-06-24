@@ -1,4 +1,4 @@
-package ru.fryct999.recipecomposeapp.ui.recipes.model
+package ru.fryct999.recipecomposeapp.features.recipes.presentation.model
 
 import android.os.Parcelable
 import androidx.compose.runtime.Immutable
