@@ -88,11 +88,12 @@ fun RecipesApp(
 
                 composable(route = Destination.Categories.route) {
                     CategoriesScreen(
-                        onCategoryClick = { categoryId, categoryTitle ->
+                        onCategoryClick = { categoryId, categoryTitle, categoryImgUrl ->
                             navController.navigate(
                                 Destination.Recipes.createRoute(
                                     categoryId,
-                                    categoryTitle
+                                    categoryTitle,
+                                    categoryImgUrl,
                                 )
                             )
                         },
@@ -105,10 +106,12 @@ fun RecipesApp(
                     arguments = listOf(
                         navArgument("categoryId") { type = NavType.IntType },
                         navArgument("categoryTitle") { type = NavType.StringType },
+                        navArgument("categoryImgUrl") { type = NavType.StringType },
                     ),
                 ) { backStackEntry ->
                     val categoryId = backStackEntry.arguments?.getInt("categoryId") ?: 0
                     val categoryTitle = backStackEntry.arguments?.getString("categoryTitle") ?: ""
+                    val categoryImgUrl = backStackEntry.arguments?.getString("categoryImgUrl") ?: ""
 
                     RecipesScreen(
                         categoryId = categoryId,
