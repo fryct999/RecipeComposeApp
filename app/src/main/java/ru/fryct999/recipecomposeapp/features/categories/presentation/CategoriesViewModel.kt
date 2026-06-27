@@ -23,7 +23,7 @@ class CategoriesViewModel() : ViewModel() {
                 setCategories(RecipesRepositoryStub.getCategories().map { it.toUiModel() })
                 setLoading(false)
             } catch (e: Exception) {
-                setError("Ошибка при загрузке списка рецептов. $e")
+                setError("Ошибка при загрузке списка категорий.")
                 setLoading(false)
             }
         }
