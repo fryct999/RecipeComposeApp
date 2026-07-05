@@ -7,68 +7,71 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import ru.fryct999.recipecomposeapp.R
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil3.compose.rememberAsyncImagePainter
 import ru.fryct999.recipecomposeapp.core.ui.ScreenHeader
-import ru.fryct999.recipecomposeapp.data.repository.RecipesRepositoryStub.getRecipesByCategoryId
-import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.RecipeUiModel
-import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.toUiModel
+import ru.fryct999.recipecomposeapp.features.recipes.presentation.RecipesViewModel
 import ru.fryct999.recipecomposeapp.ui.theme.Dimens.padding16
 import ru.fryct999.recipecomposeapp.ui.theme.Dimens.padding8
 import ru.fryct999.recipecomposeapp.ui.theme.RecipeComposeAppTheme
 
 @Composable
 fun RecipesScreen(
-    categoryId: Int?,
-    categoryTitle: String?,
-    modifier: Modifier = Modifier,
     onRecipeClick: (Int) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    var recipes by remember { mutableStateOf<List<RecipeUiModel>>(emptyList()) }
-    var isLoading by remember { mutableStateOf(false) }
-
-    LaunchedEffect(categoryId) {
-        isLoading = true
-
-        try {
-            categoryId?.let {
-                recipes = getRecipesByCategoryId(it).map { dto -> dto.toUiModel() }
-            }
-        } finally {
-            isLoading = false
-        }
-    }
+    val viewModel: RecipesViewModel = viewModel()
+    val uiState by viewModel.uiState.collectAsState()
 
     Column(
         modifier = modifier
     ) {
         ScreenHeader(
-            painter = painterResource(id = R.drawable.bcg_recipes_list),
-            contentDescription = "Раздел с рецептами $categoryTitle",
-            text = categoryTitle ?: "",
+            painter = rememberAsyncImagePainter(uiState.categoryImageUrl),
+            contentDescription = "Раздел с рецептами ${uiState.categoryTitle}",
+            text = uiState.categoryTitle,
         )
 
-        if (isLoading) {
+        if (uiState.isLoading) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator()
             }
+        } else if (uiState.error != null) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = uiState.error ?: "Непредвиденная ошибка",
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
+        } else if (uiState.isEmpty) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "В этой категории пока нет рецептов",
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
         } else {
             LazyColumn(
                 modifier = Modifier.weight(1f)
             ) {
-                items(recipes, key = { it.id }) { recipe ->
+                items(uiState.recipes, key = { it.id }) { recipe ->
                     RecipeItem(
                         recipe = recipe,
                         onClick = { onRecipeClick(recipe.id) },
@@ -85,8 +88,6 @@ fun RecipesScreen(
 fun RecipesScreenPreview() {
     RecipeComposeAppTheme {
         RecipesScreen(
-            categoryId = 0,
-            categoryTitle = "Бургеры",
             onRecipeClick = { _ -> },
         )
     }

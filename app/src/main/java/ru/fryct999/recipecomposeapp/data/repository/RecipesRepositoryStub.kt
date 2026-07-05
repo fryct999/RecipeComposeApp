@@ -128,8 +128,8 @@ object RecipesRepositoryStub : RecipesRepository {
         return categories
     }
 
-    fun getRecipesByCategoryId(categoryId: Int): List<RecipeDto> {
-        return when (categoryId) {
+    override fun getRecipesByCategoryId(id: Int): List<RecipeDto> {
+        return when (id) {
             0 -> burgerRecipes
             else -> emptyList()
         }
