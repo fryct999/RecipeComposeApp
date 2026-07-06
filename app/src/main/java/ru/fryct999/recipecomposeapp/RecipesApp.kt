@@ -7,25 +7,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
-import ru.fryct999.recipecomposeapp.features.categories.ui.CategoriesScreen
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import kotlinx.coroutines.delay
 import ru.fryct999.recipecomposeapp.core.utils.FavoriteDataStoreManager
-import ru.fryct999.recipecomposeapp.data.repository.RecipesRepositoryStub
-import ru.fryct999.recipecomposeapp.data.repository.RecipesRepositoryStub.getRecipeById
-import ru.fryct999.recipecomposeapp.navigation.DEEP_LINK_SCHEME
 import ru.fryct999.recipecomposeapp.navigation.Destination
-import ru.fryct999.recipecomposeapp.navigation.PARAM_RECIPE_ID
-import ru.fryct999.recipecomposeapp.features.details.ui.RecipeDetailsScreen
-import ru.fryct999.recipecomposeapp.features.favorites.ui.FavoritesScreen
 import ru.fryct999.recipecomposeapp.ui.navigation.BottomNavigation
-import ru.fryct999.recipecomposeapp.features.recipes.ui.RecipesScreen
+import ru.fryct999.recipecomposeapp.navigation.AppNavHost
+import ru.fryct999.recipecomposeapp.navigation.Constants.DEEP_LINK_SCHEME
 import ru.fryct999.recipecomposeapp.ui.theme.RecipeComposeAppTheme
 
 @Composable
@@ -71,76 +61,11 @@ fun RecipesApp(
                 )
             },
         ) { paddingValues ->
-            NavHost(
+            AppNavHost(
                 navController = navController,
-                startDestination = Destination.Categories.route,
-            ) {
-                composable(route = Destination.Favorite.route) {
-                    FavoritesScreen(
-                        favoriteDataStoreManager = favoriteDataStoreManager,
-                        recipesRepository = RecipesRepositoryStub,
-                        onRecipeClick = { recipeId ->
-                            navController.navigate(Destination.RecipeDetails.createRoute(recipeId))
-                        },
-                        modifier = Modifier.padding(paddingValues),
-                    )
-                }
-
-                composable(route = Destination.Categories.route) {
-                    CategoriesScreen(
-                        onCategoryClick = { categoryId, categoryTitle, categoryImgUrl ->
-                            navController.navigate(
-                                Destination.Recipes.createRoute(
-                                    categoryId,
-                                    categoryTitle,
-                                    categoryImgUrl,
-                                )
-                            )
-                        },
-                        modifier = Modifier.padding(paddingValues),
-                    )
-                }
-
-                composable(
-                    route = Destination.Recipes.route,
-                    arguments = listOf(
-                        navArgument("categoryId") { type = NavType.IntType },
-                        navArgument("categoryTitle") { type = NavType.StringType },
-                        navArgument("categoryImgUrl") { type = NavType.StringType },
-                    ),
-                ) { backStackEntry ->
-                    val categoryId = backStackEntry.arguments?.getInt("categoryId") ?: 0
-                    val categoryTitle = backStackEntry.arguments?.getString("categoryTitle") ?: ""
-                    val categoryImgUrl = backStackEntry.arguments?.getString("categoryImgUrl") ?: ""
-
-                    RecipesScreen(
-                        categoryId = categoryId,
-                        categoryTitle = categoryTitle,
-                        onRecipeClick = { recipeId ->
-                            navController.navigate(Destination.RecipeDetails.createRoute(recipeId))
-                        },
-                        modifier = Modifier.padding(paddingValues),
-                    )
-                }
-
-                composable(
-                    route = Destination.RecipeDetails.route,
-                    arguments = listOf(
-                        navArgument(PARAM_RECIPE_ID) { type = NavType.IntType },
-                    ),
-                ) { backStackEntry ->
-                    val recipeId = backStackEntry.arguments?.getInt(PARAM_RECIPE_ID) ?: 0
-                    val recipe = getRecipeById(recipeId)
-
-                    recipe?.let {
-                        RecipeDetailsScreen(
-                            recipeId = recipeId,
-                            favoriteDataStoreManager = favoriteDataStoreManager,
-                            modifier = Modifier.padding(paddingValues)
-                        )
-                    }
-                }
-            }
+                favoriteDataStoreManager = favoriteDataStoreManager,
+                modifier = Modifier.padding(paddingValues),
+            )
         }
     }
 }
