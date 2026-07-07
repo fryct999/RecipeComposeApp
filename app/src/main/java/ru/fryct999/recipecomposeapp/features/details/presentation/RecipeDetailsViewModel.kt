@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.fryct999.recipecomposeapp.core.utils.FavoriteDataStoreManager
+import ru.fryct999.recipecomposeapp.data.model.RecipeDto
 import ru.fryct999.recipecomposeapp.data.repository.RecipesRepository
 import ru.fryct999.recipecomposeapp.features.details.presentation.model.RecipeDetailsUiState
 import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.IngredientUiModel
@@ -20,7 +21,7 @@ import ru.fryct999.recipecomposeapp.navigation.Constants.PARAM_RECIPE_ID
 class RecipeDetailsViewModel(
     application: Application,
     savedStateHandle: SavedStateHandle,
-    recipesRepository: RecipesRepository,
+    private val recipesRepository: RecipesRepository,
 ) : AndroidViewModel(application) {
     private val favoriteManager = FavoriteDataStoreManager(application)
     private val recipeId = savedStateHandle.get<Int>(PARAM_RECIPE_ID) ?: -1
@@ -31,7 +32,7 @@ class RecipeDetailsViewModel(
         setLoading(true)
         viewModelScope.launch {
             try {
-                val recipe = recipesRepository.getRecipeById(recipeId)
+                val recipe = loadRecipe(recipeId)
                 val ingredientsList = recipe?.ingredients?.map { ingredient ->
                     ingredient.toUiModel()
                 } ?: emptyList()
@@ -54,6 +55,8 @@ class RecipeDetailsViewModel(
                 }
         }
     }
+
+    private fun loadRecipe(recipeId: Int): RecipeDto? = recipesRepository.getRecipeById(recipeId)
 
     private fun setLoading(loading: Boolean) {
         _uiState.update { currentState ->

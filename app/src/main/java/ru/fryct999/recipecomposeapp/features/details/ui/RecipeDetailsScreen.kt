@@ -105,7 +105,7 @@ fun RecipeDetailsScreen(
 
             PortionsSlider(
                 currentPortions = currentPortions,
-                onPortionsChange = { num -> viewModel.setPortionCount(num) },
+                updatePortions = { num -> viewModel.setPortionCount(num) },
                 modifier = Modifier.padding(horizontal = padding16),
             )
 
@@ -126,7 +126,7 @@ fun RecipeDetailsScreen(
 @Composable
 fun PortionsSlider(
     currentPortions: Int,
-    onPortionsChange: (Int) -> Unit,
+    updatePortions: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -146,7 +146,7 @@ fun PortionsSlider(
 
         Slider(
             value = currentPortions.toFloat(),
-            onValueChange = { onPortionsChange(it.roundToInt()) },
+            onValueChange = { updatePortions(it.roundToInt()) },
             valueRange = 1f..12f,
             steps = 10,
             thumb = {

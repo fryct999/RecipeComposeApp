@@ -40,6 +40,7 @@ class RecipesViewModel(
                 setCategoryImageUrl(categoryImageUrl)
                 setLoading(false)
             } catch (e: Exception) {
+
                 setError("Ошибка при загрузке списка рецептов.")
                 setLoading(false)
             }
