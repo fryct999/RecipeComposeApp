@@ -111,7 +111,7 @@ fun RecipeDetailsScreen(
 
             PortionsSlider(
                 currentPortions = currentPortions,
-                onPortionsChange = { num -> viewModel.setPortionCount(num) },
+                onPortionsChange = { num -> viewModel.updatePortions(num) },
                 modifier = Modifier.padding(horizontal = padding16),
             )
 

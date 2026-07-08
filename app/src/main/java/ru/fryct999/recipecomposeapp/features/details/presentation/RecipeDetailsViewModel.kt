@@ -42,7 +42,7 @@ class RecipeDetailsViewModel(
                 } ?: emptyList()
 
                 setRecipe(recipe?.toUiModel())
-                setPortionCount(1)
+                updatePortions(1)
                 setIngredients(ingredientsList)
                 setLoading(false)
             } catch (e: Exception) {
@@ -84,7 +84,7 @@ class RecipeDetailsViewModel(
         }
     }
 
-    fun setPortionCount(portionsCount: Int) {
+    fun updatePortions(portionsCount: Int) {
         _uiState.update { currentState ->
             currentState.copy(portionsCount = portionsCount)
         }
