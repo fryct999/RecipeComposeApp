@@ -3,13 +3,16 @@ package ru.fryct999.recipecomposeapp.features.recipes.presentation
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavBackStackEntry
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.fryct999.recipecomposeapp.data.repository.RecipesRepository
+import ru.fryct999.recipecomposeapp.data.repository.RecipesRepositoryStub
 import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.RecipeUiModel
 import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.RecipesUiState
 import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.toUiModel
@@ -19,7 +22,7 @@ import ru.fryct999.recipecomposeapp.navigation.Constants.CATEGORY_TITLE
 
 class RecipesViewModel(
     savedStateHandle: SavedStateHandle,
-    recipesRepository: RecipesRepository,
+    private val recipesRepository: RecipesRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(RecipesUiState())
     val uiState: StateFlow<RecipesUiState> = _uiState.asStateFlow()
@@ -75,5 +78,19 @@ class RecipesViewModel(
         _uiState.update { currentState ->
             currentState.copy(categoryImageUrl = categoryImageUrl)
         }
+    }
+}
+
+class RecipesViewModelFactory(
+    private val entry: NavBackStackEntry,
+    private val recipesRepository: RecipesRepository = RecipesRepositoryStub,
+) : ViewModelProvider.Factory {
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return RecipesViewModel(
+            savedStateHandle = entry.savedStateHandle,
+            recipesRepository = recipesRepository,
+        ) as T
     }
 }
