@@ -3,7 +3,12 @@ package ru.fryct999.recipecomposeapp.features.details.presentation
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.CreationExtras
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -93,5 +98,19 @@ class RecipeDetailsViewModel(
                 favoriteManager.addFavorite(recipeId)
             }
         }
+    }
+}
+
+class RecipeDetailsViewModelFactory(
+    private val recipesRepository: RecipesRepository
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
+        val application = extras[APPLICATION_KEY] ?: error("Application not available")
+        val savedStateHandle = extras.createSavedStateHandle()
+        return RecipeDetailsViewModel(
+            application = application,
+            savedStateHandle = savedStateHandle,
+            recipesRepository = recipesRepository
+        ) as T
     }
 }

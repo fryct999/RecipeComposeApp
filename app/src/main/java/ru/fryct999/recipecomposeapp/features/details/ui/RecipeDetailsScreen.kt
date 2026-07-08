@@ -34,7 +34,9 @@ import coil3.request.placeholder
 import ru.fryct999.recipecomposeapp.R
 import ru.fryct999.recipecomposeapp.core.ui.ScreenHeader
 import ru.fryct999.recipecomposeapp.core.utils.shareRecipe
+import ru.fryct999.recipecomposeapp.data.repository.RecipesRepositoryStub
 import ru.fryct999.recipecomposeapp.features.details.presentation.RecipeDetailsViewModel
+import ru.fryct999.recipecomposeapp.features.details.presentation.RecipeDetailsViewModelFactory
 import ru.fryct999.recipecomposeapp.features.recipes.ui.IngredientItem
 import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.IngredientUiModel
 import ru.fryct999.recipecomposeapp.ui.theme.Dimens.padding10
@@ -52,7 +54,11 @@ import kotlin.math.roundToInt
 fun RecipeDetailsScreen(
     modifier: Modifier = Modifier,
 ) {
-    val viewModel: RecipeDetailsViewModel = viewModel()
+    val viewModel: RecipeDetailsViewModel = viewModel(
+        factory = RecipeDetailsViewModelFactory(RecipesRepositoryStub)
+    )
+
+    //val viewModel: RecipeDetailsViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
 
     if (uiState.isLoading) {
