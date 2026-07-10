@@ -11,11 +11,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import kotlinx.serialization.json.Json
 import ru.fryct999.recipecomposeapp.data.model.CategoryDto
+import ru.fryct999.recipecomposeapp.data.model.RecipeDto
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 class MainActivity : ComponentActivity() {
     private var deepLinkIntent by mutableStateOf<Intent?>(null)
+    private val threadPool: ExecutorService = Executors.newFixedThreadPool(10)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,27 +33,45 @@ class MainActivity : ComponentActivity() {
             RecipesApp(deepLinkIntent = deepLinkIntent)
         }
 
-        Log.i("!!!", "Метод onCreate() выполняется на потоке: ${Thread.currentThread().name}")
+        Log.i("Pool", "Метод onCreate() выполняется на потоке: ${Thread.currentThread().name}")
 
-        val thread = Thread {
-            Log.i("!!!", "Выполняю запрос на потоке: ${Thread.currentThread().name}")
+        threadPool.execute {
+            try {
+                Log.i("Pool", "Выполняю запрос на потоке: ${Thread.currentThread().name}")
 
-            val connection = URL("https://recipes.androidsprint.ru/api/category").openConnection() as HttpURLConnection
-            connection.connect()
+                val connection =
+                    URL("https://recipes.androidsprint.ru/api/category").openConnection() as HttpURLConnection
+                connection.connect()
 
-            val body = connection.getInputStream().bufferedReader().readText()
-            Log.i("!!!", "responseCode: ${connection.responseCode}")
-            Log.i("!!!", "responseMessage: ${connection.responseMessage}")
-            Log.i("!!!", "Body: $body")
+                val body = connection.getInputStream().bufferedReader().readText()
+                val categoryDto = Json.decodeFromString<List<CategoryDto>>(body)
+                Log.i("Pool", "Всего категорий: ${categoryDto.size}")
 
-            val categoryDto = Json.decodeFromString<List<CategoryDto>>(body)
+                categoryDto.forEach {
+                    threadPool.execute {
+                        try {
+                            Log.i(
+                                "Pool",
+                                "Выполняю запрос на потоке: ${Thread.currentThread().name}"
+                            )
 
-            Log.i("!!!", "Всего категорий: ${categoryDto.size}")
-            categoryDto.forEach {
-                Log.i("!!!", "Имя категории: ${it.title}")
+                            val connection =
+                                URL("https://recipes.androidsprint.ru/api/category/${it.id}/recipes").openConnection() as HttpURLConnection
+                            connection.connect()
+
+                            val body = connection.getInputStream().bufferedReader().readText()
+                            val recipesDto = Json.decodeFromString<List<RecipeDto>>(body)
+                            Log.i("Pool", "Название категории: ${it.title}")
+                            Log.i("Pool", "Колличество рецептов: ${recipesDto.size}")
+                        } catch (e: Exception) {
+                            Log.e("Pool", "Ошибка при закгрузке категории - ${it.title}: ${e.message}")
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("Pool", "Ошибка при загрузке категорий: ${e.message}")
             }
         }
-        thread.start()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -59,5 +81,10 @@ class MainActivity : ComponentActivity() {
         }
 
         setIntent(intent)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        threadPool.shutdown()
     }
 }
