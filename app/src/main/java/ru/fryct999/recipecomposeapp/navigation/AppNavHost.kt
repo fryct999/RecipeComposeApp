@@ -7,8 +7,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import ru.fryct999.recipecomposeapp.core.utils.FavoriteDataStoreManager
-import ru.fryct999.recipecomposeapp.data.repository.RecipesRepositoryStub
 import ru.fryct999.recipecomposeapp.features.categories.ui.CategoriesScreen
 import ru.fryct999.recipecomposeapp.features.details.ui.RecipeDetailsScreen
 import ru.fryct999.recipecomposeapp.features.favorites.ui.FavoritesScreen
@@ -17,7 +15,6 @@ import ru.fryct999.recipecomposeapp.features.recipes.ui.RecipesScreen
 @Composable
 fun AppNavHost(
     navController: NavHostController,
-    favoriteDataStoreManager: FavoriteDataStoreManager,
     modifier: Modifier = Modifier,
 ) {
     NavHost(
@@ -41,8 +38,6 @@ fun AppNavHost(
 
         composable(route = Destination.Favorite.route) {
             FavoritesScreen(
-                favoriteDataStoreManager = favoriteDataStoreManager,
-                recipesRepository = RecipesRepositoryStub,
                 onRecipeClick = { recipeId ->
                     navController.navigate(Destination.RecipeDetails.createRoute(recipeId))
                 },
@@ -72,11 +67,7 @@ fun AppNavHost(
                 navArgument(Constants.PARAM_RECIPE_ID) { type = NavType.IntType },
             ),
         ) { backStackEntry ->
-            val recipeId = backStackEntry.arguments?.getInt(Constants.PARAM_RECIPE_ID) ?: 0
-
             RecipeDetailsScreen(
-                recipeId = recipeId,
-                favoriteDataStoreManager = favoriteDataStoreManager,
                 modifier = modifier,
             )
         }

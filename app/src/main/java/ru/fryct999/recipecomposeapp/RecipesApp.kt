@@ -63,7 +63,6 @@ fun RecipesApp(
         ) { paddingValues ->
             AppNavHost(
                 navController = navController,
-                favoriteDataStoreManager = favoriteDataStoreManager,
                 modifier = Modifier.padding(paddingValues),
             )
         }

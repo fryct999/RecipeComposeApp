@@ -13,6 +13,9 @@ import ru.fryct999.recipecomposeapp.data.repository.RecipesRepository
 import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.RecipeUiModel
 import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.RecipesUiState
 import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.toUiModel
+import ru.fryct999.recipecomposeapp.navigation.Constants.CATEGORY_ID
+import ru.fryct999.recipecomposeapp.navigation.Constants.CATEGORY_IMAGE_URL
+import ru.fryct999.recipecomposeapp.navigation.Constants.CATEGORY_TITLE
 
 class RecipesViewModel(
     savedStateHandle: SavedStateHandle,
@@ -25,9 +28,9 @@ class RecipesViewModel(
         setLoading(true)
         viewModelScope.launch {
             try {
-                val categoryTitle = Uri.decode(savedStateHandle.get<String>("categoryTitle"))
-                val categoryImageUrl = Uri.decode(savedStateHandle.get<String>("categoryImageUrl"))
-                val categoryId = savedStateHandle.get<Int>("categoryId") ?: -1
+                val categoryTitle = Uri.decode(savedStateHandle.get<String>(CATEGORY_TITLE))
+                val categoryImageUrl = Uri.decode(savedStateHandle.get<String>(CATEGORY_IMAGE_URL))
+                val categoryId = savedStateHandle.get<Int>(CATEGORY_ID) ?: -1
                 val recipes = recipesRepository.getRecipesByCategoryId(categoryId).map { dto ->
                     dto.toUiModel()
                 }

@@ -18,35 +18,27 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
 import coil3.request.error
 import coil3.request.placeholder
-import kotlinx.coroutines.launch
 import ru.fryct999.recipecomposeapp.R
 import ru.fryct999.recipecomposeapp.core.ui.ScreenHeader
-import ru.fryct999.recipecomposeapp.core.utils.FavoriteDataStoreManager
 import ru.fryct999.recipecomposeapp.core.utils.shareRecipe
-import ru.fryct999.recipecomposeapp.data.repository.RecipesRepositoryStub.getRecipeById
+import ru.fryct999.recipecomposeapp.data.repository.RecipesRepositoryStub
+import ru.fryct999.recipecomposeapp.features.details.presentation.RecipeDetailsViewModel
+import ru.fryct999.recipecomposeapp.features.details.presentation.RecipeDetailsViewModelFactory
 import ru.fryct999.recipecomposeapp.features.recipes.ui.IngredientItem
 import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.IngredientUiModel
-import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.RecipeUiModel
-import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.toUiModel
 import ru.fryct999.recipecomposeapp.ui.theme.Dimens.padding10
 import ru.fryct999.recipecomposeapp.ui.theme.Dimens.padding16
 import ru.fryct999.recipecomposeapp.ui.theme.Dimens.padding8
@@ -60,39 +52,35 @@ import kotlin.math.roundToInt
 
 @Composable
 fun RecipeDetailsScreen(
-    recipeId: Int,
-    favoriteDataStoreManager: FavoriteDataStoreManager,
     modifier: Modifier = Modifier,
 ) {
-    val coroutineScope = rememberCoroutineScope()
-    var recipe by remember { mutableStateOf<RecipeUiModel?>(null) }
-    var isLoading by remember { mutableStateOf(false) }
-    val context = LocalContext.current
+    val viewModel: RecipeDetailsViewModel = viewModel(
+        factory = RecipeDetailsViewModelFactory(RecipesRepositoryStub)
+    )
 
-    val isFavorite by favoriteDataStoreManager
-        .isFavoriteFlow(recipeId)
-        .collectAsState(initial = false)
+    //val viewModel: RecipeDetailsViewModel = viewModel()
+    val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(recipeId) {
-        isLoading = true
-
-        try {
-            recipe = getRecipeById(recipeId)?.toUiModel()
-        } finally {
-            isLoading = false
-        }
-    }
-
-    if (isLoading) {
+    if (uiState.isLoading) {
         Box(
             modifier = modifier,
             contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator()
         }
+    } else if (uiState.error != null) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = uiState.error ?: "Непредвиденная ошибка",
+                style = MaterialTheme.typography.titleMedium,
+            )
+        }
     } else {
-        val recipeUiModel = recipe ?: return
-        var currentPortions by rememberSaveable { mutableIntStateOf(1) }
+        val recipeUiModel = uiState.recipe ?: return
+        val currentPortions = uiState.portionsCount
 
         Column(
             verticalArrangement = Arrangement.spacedBy(padding10),
@@ -100,6 +88,8 @@ fun RecipeDetailsScreen(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
+            val context = LocalContext.current
+
             ScreenHeader(
                 painter = rememberAsyncImagePainter(
                     model = ImageRequest.Builder(LocalContext.current)
@@ -113,48 +103,20 @@ fun RecipeDetailsScreen(
                 showShareButton = true,
                 onShareClick = { shareRecipe(context, recipeUiModel.id, recipeUiModel.title) },
                 showFavoriteButton = true,
-                isFavorite = isFavorite,
+                isFavorite = uiState.isFavorite,
                 onFavoriteToggle = {
-                    coroutineScope.launch {
-                        if (isFavorite) {
-                            favoriteDataStoreManager.removeFavorite(recipeId)
-                        } else {
-                            favoriteDataStoreManager.addFavorite(recipeId)
-                        }
-                    }
+                    viewModel.toggleFavorite()
                 },
             )
 
             PortionsSlider(
                 currentPortions = currentPortions,
-                onPortionsChange = { num -> currentPortions = num },
+                onPortionsChange = { num -> viewModel.updatePortions(num) },
                 modifier = Modifier.padding(horizontal = padding16),
             )
 
-            val scaledIngredients = remember(recipeUiModel.ingredients, currentPortions) {
-                val multiplier = currentPortions.toDouble()
-                recipeUiModel.ingredients.map { ingredient ->
-                    ingredient.copy(
-                        amount = ingredient.originalAmount?.let {
-                            val amount = (it * multiplier)
-                            val num = amount.toInt()
-                            val fract = amount % 1.0
-
-                            val fractStr = when {
-                                fract >= 0.75 -> "3/4"
-                                fract >= 0.5 -> "1/2"
-                                fract >= 0.25 -> "1/4"
-                                else -> ""
-                            }
-
-                            "${if (num != 0) num else ""} $fractStr".trim()
-                        } ?: ingredient.amount
-                    )
-                }
-            }
-
             IngredientsList(
-                ingredients = scaledIngredients,
+                ingredients = uiState.scaledIngredients,
                 modifier = Modifier.padding(horizontal = padding16)
             )
 
@@ -293,8 +255,6 @@ fun InstructionsList(
 fun RecipeDetailsPreview() {
     RecipeComposeAppTheme {
         RecipeDetailsScreen(
-            recipeId = 0,
-            favoriteDataStoreManager = FavoriteDataStoreManager(LocalContext.current),
             modifier = Modifier,
         )
     }
