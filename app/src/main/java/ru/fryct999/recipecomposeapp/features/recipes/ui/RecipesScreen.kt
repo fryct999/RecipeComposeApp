@@ -14,21 +14,26 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
 import coil3.compose.rememberAsyncImagePainter
 import ru.fryct999.recipecomposeapp.core.ui.ScreenHeader
 import ru.fryct999.recipecomposeapp.features.recipes.presentation.RecipesViewModel
+import ru.fryct999.recipecomposeapp.features.recipes.presentation.RecipesViewModelFactory
 import ru.fryct999.recipecomposeapp.ui.theme.Dimens.padding16
 import ru.fryct999.recipecomposeapp.ui.theme.Dimens.padding8
-import ru.fryct999.recipecomposeapp.ui.theme.RecipeComposeAppTheme
 
 @Composable
 fun RecipesScreen(
     onRecipeClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
+    backStackEntry: NavBackStackEntry,
 ) {
-    val viewModel: RecipesViewModel = viewModel()
+    val viewModel: RecipesViewModel = viewModel(
+        factory = RecipesViewModelFactory(backStackEntry)
+    )
+
+    //val viewModel: RecipesViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
 
     Column(
@@ -83,12 +88,13 @@ fun RecipesScreen(
     }
 }
 
-@Preview
-@Composable
-fun RecipesScreenPreview() {
-    RecipeComposeAppTheme {
-        RecipesScreen(
-            onRecipeClick = { _ -> },
-        )
-    }
-}
+//@Preview
+//@Composable
+//fun RecipesScreenPreview() {
+//    RecipeComposeAppTheme {
+//        RecipesScreen(
+//            backStackEntry = NavBackStackEntry(),
+//            onRecipeClick = { _ -> },
+//        )
+//    }
+//}
