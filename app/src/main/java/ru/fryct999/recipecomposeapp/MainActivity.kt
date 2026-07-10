@@ -2,12 +2,17 @@ package ru.fryct999.recipecomposeapp
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import kotlinx.serialization.json.Json
+import ru.fryct999.recipecomposeapp.data.model.CategoryDto
+import java.net.HttpURLConnection
+import java.net.URL
 
 class MainActivity : ComponentActivity() {
     private var deepLinkIntent by mutableStateOf<Intent?>(null)
@@ -23,6 +28,28 @@ class MainActivity : ComponentActivity() {
         setContent {
             RecipesApp(deepLinkIntent = deepLinkIntent)
         }
+
+        Log.i("!!!", "Метод onCreate() выполняется на потоке: ${Thread.currentThread().name}")
+
+        val thread = Thread {
+            Log.i("!!!", "Выполняю запрос на потоке: ${Thread.currentThread().name}")
+
+            val connection = URL("https://recipes.androidsprint.ru/api/category").openConnection() as HttpURLConnection
+            connection.connect()
+
+            val body = connection.getInputStream().bufferedReader().readText()
+            Log.i("!!!", "responseCode: ${connection.responseCode}")
+            Log.i("!!!", "responseMessage: ${connection.responseMessage}")
+            Log.i("!!!", "Body: $body")
+
+            val categoryDto = Json.decodeFromString<List<CategoryDto>>(body)
+
+            Log.i("!!!", "Всего категорий: ${categoryDto.size}")
+            categoryDto.forEach {
+                Log.i("!!!", "Имя категории: ${it.title}")
+            }
+        }
+        thread.start()
     }
 
     override fun onNewIntent(intent: Intent) {
