@@ -38,11 +38,18 @@ class RecipeDetailsViewModel(
         viewModelScope.launch {
             try {
                 val recipe = loadRecipe(recipeId)
-                val ingredientsList = recipe?.ingredients?.map { ingredient ->
-                    ingredient.toUiModel()
-                } ?: emptyList()
 
-                setRecipe(recipe?.toUiModel())
+                if (recipe == null) {
+                    setError("Рецепт не найден")
+                    setLoading(false)
+                    return@launch
+                }
+
+                val ingredientsList = recipe.ingredients.map { ingredient ->
+                    ingredient.toUiModel()
+                }
+
+                setRecipe(recipe.toUiModel())
                 updatePortions(1)
                 setIngredients(ingredientsList)
                 setLoading(false)
