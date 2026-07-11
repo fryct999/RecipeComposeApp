@@ -33,20 +33,28 @@ class MainActivity : ComponentActivity() {
 
         val thread = Thread {
             Log.i("!!!", "Выполняю запрос на потоке: ${Thread.currentThread().name}")
+            var connection: HttpURLConnection? = null
 
-            val connection = URL("https://recipes.androidsprint.ru/api/category").openConnection() as HttpURLConnection
-            connection.connect()
+            try {
+                connection =
+                    URL("https://recipes.androidsprint.ru/api/category").openConnection() as HttpURLConnection
+                connection.connect()
 
-            val body = connection.getInputStream().bufferedReader().readText()
-            Log.i("!!!", "responseCode: ${connection.responseCode}")
-            Log.i("!!!", "responseMessage: ${connection.responseMessage}")
-            Log.i("!!!", "Body: $body")
+                val body = connection.getInputStream().bufferedReader().use() { it.readText() }
+                Log.i("!!!", "responseCode: ${connection.responseCode}")
+                Log.i("!!!", "responseMessage: ${connection.responseMessage}")
+                Log.i("!!!", "Body: $body")
 
-            val categoryDto = Json.decodeFromString<List<CategoryDto>>(body)
+                val categoryDto = Json.decodeFromString<List<CategoryDto>>(body)
 
-            Log.i("!!!", "Всего категорий: ${categoryDto.size}")
-            categoryDto.forEach {
-                Log.i("!!!", "Имя категории: ${it.title}")
+                Log.i("!!!", "Всего категорий: ${categoryDto.size}")
+                categoryDto.forEach {
+                    Log.i("!!!", "Имя категории: ${it.title}")
+                }
+            } catch (e: Exception) {
+                Log.i("!!!", "Ошибка запроса: ${e.message}")
+            } finally {
+                connection?.disconnect()
             }
         }
         thread.start()
