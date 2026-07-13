@@ -68,4 +68,5 @@ dependencies {
     implementation(libs.lifecycle.runtime.compose)
 
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.okhttp)
 }
