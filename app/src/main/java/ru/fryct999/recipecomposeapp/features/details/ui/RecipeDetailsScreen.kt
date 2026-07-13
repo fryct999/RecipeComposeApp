@@ -63,7 +63,8 @@ fun RecipeDetailsScreen(
 
     if (uiState.isLoading) {
         Box(
-            modifier = modifier,
+            modifier = modifier
+                .fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator()

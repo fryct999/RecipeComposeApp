@@ -52,8 +52,9 @@ fun AppNavHost(
                 navArgument(Constants.CATEGORY_TITLE) { type = NavType.StringType },
                 navArgument(Constants.CATEGORY_IMAGE_URL) { type = NavType.StringType },
             ),
-        ) {
+        ) { backStackEntry ->
             RecipesScreen(
+                backStackEntry = backStackEntry,
                 onRecipeClick = { recipeId ->
                     navController.navigate(Destination.RecipeDetails.createRoute(recipeId))
                 },
