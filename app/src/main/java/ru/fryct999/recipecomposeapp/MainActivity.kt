@@ -40,33 +40,50 @@ class MainActivity : ComponentActivity() {
                 Log.i("Pool", "Выполняю запрос на потоке: ${Thread.currentThread().name}")
 
                 val connection =
-                    URL("https://recipes.androidsprint.ru/api/category").openConnection() as HttpURLConnection
-                connection.connect()
+                    URL("https://recipes.androidsprint.ru/api/category").openConnection()
 
-                val body = connection.getInputStream().bufferedReader().readText()
-                val categoryDto = Json.decodeFromString<List<CategoryDto>>(body)
-                Log.i("Pool", "Всего категорий: ${categoryDto.size}")
+                if (connection is HttpURLConnection) {
+                    connection.connect()
 
-                categoryDto.forEach {
-                    threadPool.execute {
-                        try {
-                            Log.i(
-                                "Pool",
-                                "Выполняю запрос на потоке: ${Thread.currentThread().name}"
-                            )
+                    val body = connection.getInputStream().bufferedReader().readText()
+                    val categoryDto = Json.decodeFromString<List<CategoryDto>>(body)
+                    Log.i("Pool", "Всего категорий: ${categoryDto.size}")
 
-                            val connection =
-                                URL("https://recipes.androidsprint.ru/api/category/${it.id}/recipes").openConnection() as HttpURLConnection
-                            connection.connect()
+                    categoryDto.forEach {
+                        threadPool.execute {
+                            try {
+                                Log.i(
+                                    "Pool",
+                                    "Выполняю запрос на потоке: ${Thread.currentThread().name}"
+                                )
 
-                            val body = connection.getInputStream().bufferedReader().readText()
-                            val recipesDto = Json.decodeFromString<List<RecipeDto>>(body)
-                            Log.i("Pool", "Название категории: ${it.title}")
-                            Log.i("Pool", "Колличество рецептов: ${recipesDto.size}")
-                        } catch (e: Exception) {
-                            Log.e("Pool", "Ошибка при закгрузке категории - ${it.title}: ${e.message}")
+                                val connection =
+                                    URL("https://recipes.androidsprint.ru/api/category/${it.id}/recipes").openConnection()
+
+                                if (connection is HttpURLConnection) {
+                                    connection.connect()
+
+                                    val body =
+                                        connection.getInputStream().bufferedReader().readText()
+                                    val recipesDto = Json.decodeFromString<List<RecipeDto>>(body)
+                                    Log.i("Pool", "Название категории: ${it.title}")
+                                    Log.i("Pool", "Колличество рецептов: ${recipesDto.size}")
+                                } else {
+                                    Log.w(
+                                        "Pool",
+                                        "Неожиданный тип соединения: ${connection::class.simpleName}"
+                                    )
+                                }
+                            } catch (e: Exception) {
+                                Log.e(
+                                    "Pool",
+                                    "Ошибка при закгрузке категории - ${it.title}: ${e.message}"
+                                )
+                            }
                         }
                     }
+                } else {
+                    Log.w("Pool", "Неожиданный тип соединения: ${connection::class.simpleName}")
                 }
             } catch (e: Exception) {
                 Log.e("Pool", "Ошибка при загрузке категорий: ${e.message}")
