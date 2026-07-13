@@ -11,11 +11,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import kotlinx.serialization.json.Json
 import ru.fryct999.recipecomposeapp.data.model.CategoryDto
+import ru.fryct999.recipecomposeapp.data.model.RecipeDto
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 class MainActivity : ComponentActivity() {
     private var deepLinkIntent by mutableStateOf<Intent?>(null)
+    private val threadPool: ExecutorService = Executors.newFixedThreadPool(10)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,35 +33,62 @@ class MainActivity : ComponentActivity() {
             RecipesApp(deepLinkIntent = deepLinkIntent)
         }
 
-        Log.i("!!!", "Метод onCreate() выполняется на потоке: ${Thread.currentThread().name}")
+        Log.i("Pool", "Метод onCreate() выполняется на потоке: ${Thread.currentThread().name}")
 
-        val thread = Thread {
-            Log.i("!!!", "Выполняю запрос на потоке: ${Thread.currentThread().name}")
-            var connection: HttpURLConnection? = null
-
+        threadPool.execute {
             try {
-                connection =
-                    URL("https://recipes.androidsprint.ru/api/category").openConnection() as HttpURLConnection
-                connection.connect()
+                Log.i("Pool", "Выполняю запрос на потоке: ${Thread.currentThread().name}")
 
-                val body = connection.getInputStream().bufferedReader().use() { it.readText() }
-                Log.i("!!!", "responseCode: ${connection.responseCode}")
-                Log.i("!!!", "responseMessage: ${connection.responseMessage}")
-                Log.i("!!!", "Body: $body")
+                val connection =
+                    URL("https://recipes.androidsprint.ru/api/category").openConnection()
 
-                val categoryDto = Json.decodeFromString<List<CategoryDto>>(body)
+                if (connection is HttpURLConnection) {
+                    connection.connect()
 
-                Log.i("!!!", "Всего категорий: ${categoryDto.size}")
-                categoryDto.forEach {
-                    Log.i("!!!", "Имя категории: ${it.title}")
+                    val body = connection.getInputStream().bufferedReader().readText()
+                    val categoryDto = Json.decodeFromString<List<CategoryDto>>(body)
+                    Log.i("Pool", "Всего категорий: ${categoryDto.size}")
+
+                    categoryDto.forEach {
+                        threadPool.execute {
+                            try {
+                                Log.i(
+                                    "Pool",
+                                    "Выполняю запрос на потоке: ${Thread.currentThread().name}"
+                                )
+
+                                val connection =
+                                    URL("https://recipes.androidsprint.ru/api/category/${it.id}/recipes").openConnection()
+
+                                if (connection is HttpURLConnection) {
+                                    connection.connect()
+
+                                    val body =
+                                        connection.getInputStream().bufferedReader().readText()
+                                    val recipesDto = Json.decodeFromString<List<RecipeDto>>(body)
+                                    Log.i("Pool", "Название категории: ${it.title}")
+                                    Log.i("Pool", "Колличество рецептов: ${recipesDto.size}")
+                                } else {
+                                    Log.w(
+                                        "Pool",
+                                        "Неожиданный тип соединения: ${connection::class.simpleName}"
+                                    )
+                                }
+                            } catch (e: Exception) {
+                                Log.e(
+                                    "Pool",
+                                    "Ошибка при закгрузке категории - ${it.title}: ${e.message}"
+                                )
+                            }
+                        }
+                    }
+                } else {
+                    Log.w("Pool", "Неожиданный тип соединения: ${connection::class.simpleName}")
                 }
             } catch (e: Exception) {
-                Log.i("!!!", "Ошибка запроса: ${e.message}")
-            } finally {
-                connection?.disconnect()
+                Log.e("Pool", "Ошибка при загрузке категорий: ${e.message}")
             }
         }
-        thread.start()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -67,5 +98,10 @@ class MainActivity : ComponentActivity() {
         }
 
         setIntent(intent)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        threadPool.shutdown()
     }
 }
