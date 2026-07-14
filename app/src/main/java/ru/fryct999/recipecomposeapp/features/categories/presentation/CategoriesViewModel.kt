@@ -7,23 +7,29 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ru.fryct999.recipecomposeapp.data.repository.RecipesRepositoryStub
+import ru.fryct999.recipecomposeapp.data.repository.RecipesRepository
 import ru.fryct999.recipecomposeapp.features.categories.presentation.model.CategoriesUiState
 import ru.fryct999.recipecomposeapp.features.categories.presentation.model.CategoryUiModel
 import ru.fryct999.recipecomposeapp.features.categories.presentation.model.toUiModel
 
-class CategoriesViewModel() : ViewModel() {
+class CategoriesViewModel(
+    private val recipeRepository: RecipesRepository,
+) : ViewModel() {
     private val _uiState = MutableStateFlow(CategoriesUiState())
     val uiState: StateFlow<CategoriesUiState> = _uiState.asStateFlow()
 
     init {
+        loadCategories()
+    }
+
+    private fun loadCategories() {
         setLoading(true)
         viewModelScope.launch {
             try {
-                setCategories(RecipesRepositoryStub.getCategories().map { it.toUiModel() })
-                setLoading(false)
+                setCategories(recipeRepository.getCategories().map { it.toUiModel() })
             } catch (e: Exception) {
-                setError("Ошибка при загрузке списка категорий.")
+                setError("Ошибка при загрузке списка категорий. ${e.message}")
+            } finally {
                 setLoading(false)
             }
         }
