@@ -10,16 +10,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import kotlinx.serialization.json.Json
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import ru.fryct999.recipecomposeapp.data.model.CategoryDto
 import ru.fryct999.recipecomposeapp.data.model.RecipeDto
-import java.net.HttpURLConnection
-import java.net.URL
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import kotlin.concurrent.thread
 
 class MainActivity : ComponentActivity() {
     private var deepLinkIntent by mutableStateOf<Intent?>(null)
     private val threadPool: ExecutorService = Executors.newFixedThreadPool(10)
+    private val okHttpClient = OkHttpClient()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,60 +35,60 @@ class MainActivity : ComponentActivity() {
             RecipesApp(deepLinkIntent = deepLinkIntent)
         }
 
-        Log.i("Pool", "Метод onCreate() выполняется на потоке: ${Thread.currentThread().name}")
-
-        threadPool.execute {
+        thread {
             try {
-                Log.i("Pool", "Выполняю запрос на потоке: ${Thread.currentThread().name}")
+                Log.i("Thread", "Выполняю запрос на потоке: ${Thread.currentThread().name}")
 
-                val connection =
-                    URL("https://recipes.androidsprint.ru/api/category").openConnection()
+                val request: Request = Request.Builder()
+                    .url("https://recipes.androidsprint.ru/api/category")
+                    .build()
 
-                if (connection is HttpURLConnection) {
-                    connection.connect()
+                okHttpClient.newCall(request).execute().use { response ->
+                    val body = response.body?.string()
 
-                    val body = connection.getInputStream().bufferedReader().readText()
+                    if (body.isNullOrEmpty()) {
+                        Log.w("Thread", "Пустой ответ для списка категорий")
+                        return@use
+                    }
+
                     val categoryDto = Json.decodeFromString<List<CategoryDto>>(body)
-                    Log.i("Pool", "Всего категорий: ${categoryDto.size}")
+                    Log.i("Thread", "Всего категорий: ${categoryDto.size}")
 
                     categoryDto.forEach {
                         threadPool.execute {
                             try {
                                 Log.i(
-                                    "Pool",
+                                    "Thread",
                                     "Выполняю запрос на потоке: ${Thread.currentThread().name}"
                                 )
 
-                                val connection =
-                                    URL("https://recipes.androidsprint.ru/api/category/${it.id}/recipes").openConnection()
+                                val request: Request = Request.Builder()
+                                    .url("https://recipes.androidsprint.ru/api/category/${it.id}/recipes")
+                                    .build()
 
-                                if (connection is HttpURLConnection) {
-                                    connection.connect()
+                                okHttpClient.newCall(request).execute().use { response ->
+                                    val body = response.body?.string()
 
-                                    val body =
-                                        connection.getInputStream().bufferedReader().readText()
+                                    if (body.isNullOrEmpty()) {
+                                        Log.w("Thread", "Пустой ответ для категории ${it.title}")
+                                        return@use
+                                    }
+
                                     val recipesDto = Json.decodeFromString<List<RecipeDto>>(body)
-                                    Log.i("Pool", "Название категории: ${it.title}")
-                                    Log.i("Pool", "Колличество рецептов: ${recipesDto.size}")
-                                } else {
-                                    Log.w(
-                                        "Pool",
-                                        "Неожиданный тип соединения: ${connection::class.simpleName}"
-                                    )
+                                    Log.i("Thread", "Название категории: ${it.title}")
+                                    Log.i("Thread", "Количество рецептов: ${recipesDto.size}")
                                 }
                             } catch (e: Exception) {
                                 Log.e(
-                                    "Pool",
-                                    "Ошибка при закгрузке категории - ${it.title}: ${e.message}"
+                                    "Thread",
+                                    "Ошибка при загрузке категории - ${it.title}: ${e.message}"
                                 )
                             }
                         }
                     }
-                } else {
-                    Log.w("Pool", "Неожиданный тип соединения: ${connection::class.simpleName}")
                 }
             } catch (e: Exception) {
-                Log.e("Pool", "Ошибка при загрузке категорий: ${e.message}")
+                Log.e("Thread", "Ошибка при загрузке категорий: ${e.message}")
             }
         }
     }
