@@ -10,6 +10,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import ru.fryct999.recipecomposeapp.core.network.NetworkModule
 import ru.fryct999.recipecomposeapp.core.network.NetworkModule.apiService
 import ru.fryct999.recipecomposeapp.data.repository.RecipesRepositoryImpl
 import ru.fryct999.recipecomposeapp.features.categories.ui.CategoriesScreen
