@@ -2,7 +2,7 @@ package ru.fryct999.recipecomposeapp.features.categories.presentation.model
 
 import androidx.compose.runtime.Immutable
 import ru.fryct999.recipecomposeapp.data.model.CategoryDto
-import ru.fryct999.recipecomposeapp.ui.getImagePath
+import ru.fryct999.recipecomposeapp.core.utils.getImagePath
 
 @Immutable
 data class CategoryUiModel(
