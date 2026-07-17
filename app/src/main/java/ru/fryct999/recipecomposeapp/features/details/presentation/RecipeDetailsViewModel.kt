@@ -3,12 +3,7 @@ package ru.fryct999.recipecomposeapp.features.details.presentation
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.CreationExtras
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,7 +21,7 @@ import ru.fryct999.recipecomposeapp.navigation.Constants.PARAM_RECIPE_ID
 class RecipeDetailsViewModel(
     application: Application,
     savedStateHandle: SavedStateHandle,
-    private val recipesRepository: RecipesRepository,
+    private val repository: RecipesRepository,
 ) : AndroidViewModel(application) {
     private val favoriteManager = FavoriteDataStoreManager(application)
     private val recipeId = savedStateHandle.get<Int>(PARAM_RECIPE_ID) ?: -1
@@ -39,12 +34,6 @@ class RecipeDetailsViewModel(
             try {
                 val recipe = loadRecipe(recipeId)
 
-                if (recipe == null) {
-                    setError("Рецепт не найден")
-                    setLoading(false)
-                    return@launch
-                }
-
                 val ingredientsList = recipe.ingredients.map { ingredient ->
                     ingredient.toUiModel()
                 }
@@ -52,9 +41,9 @@ class RecipeDetailsViewModel(
                 setRecipe(recipe.toUiModel())
                 updatePortions(1)
                 setIngredients(ingredientsList)
-                setLoading(false)
             } catch (e: Exception) {
-                setError("Ошибка при загрузке списка ингредиентов.")
+                setError("Ошибка при загрузке списка ингредиентов. ${e.message}")
+            } finally {
                 setLoading(false)
             }
         }
@@ -68,7 +57,7 @@ class RecipeDetailsViewModel(
         }
     }
 
-    private fun loadRecipe(recipeId: Int): RecipeDto? = recipesRepository.getRecipeById(recipeId)
+    private suspend fun loadRecipe(recipeId: Int): RecipeDto = repository.getRecipe(recipeId)
 
     private fun setLoading(loading: Boolean) {
         _uiState.update { currentState ->
@@ -82,7 +71,7 @@ class RecipeDetailsViewModel(
         }
     }
 
-    private fun setRecipe(recipe: RecipeUiModel?) {
+    private fun setRecipe(recipe: RecipeUiModel) {
         _uiState.update { currentState ->
             currentState.copy(recipe = recipe)
         }
@@ -108,19 +97,5 @@ class RecipeDetailsViewModel(
                 favoriteManager.addFavorite(recipeId)
             }
         }
-    }
-}
-
-class RecipeDetailsViewModelFactory(
-    private val recipesRepository: RecipesRepository
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
-        val application = extras[APPLICATION_KEY] ?: error("Application not available")
-        val savedStateHandle = extras.createSavedStateHandle()
-        return RecipeDetailsViewModel(
-            application = application,
-            savedStateHandle = savedStateHandle,
-            recipesRepository = recipesRepository
-        ) as T
     }
 }

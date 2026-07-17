@@ -1,8 +1,10 @@
 package ru.fryct999.recipecomposeapp.data.repository
 
+import ru.fryct999.recipecomposeapp.data.model.CategoryDto
 import ru.fryct999.recipecomposeapp.data.model.RecipeDto
 
 interface RecipesRepository {
-    fun getRecipeById(id: Int): RecipeDto?
-    fun getRecipesByCategoryId(id: Int): List<RecipeDto>
+    suspend fun getCategories(): List<CategoryDto>
+    suspend fun getRecipe(id: Int): RecipeDto
+    suspend fun getRecipesByCategory(id: Int): List<RecipeDto>
 }

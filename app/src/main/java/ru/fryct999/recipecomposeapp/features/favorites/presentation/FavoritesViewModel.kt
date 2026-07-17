@@ -35,7 +35,7 @@ class FavoritesViewModel(
                 favoriteManager.getFavoriteIdsFlow()
                     .map { ids ->
                         ids.mapNotNull { id ->
-                            recipesRepository.getRecipeById(
+                            recipesRepository.getRecipe(
                                 id.toIntOrNull() ?: return@mapNotNull null
                             )?.toUiModel()
                         }
@@ -45,7 +45,7 @@ class FavoritesViewModel(
                         setLoading(false)
                     }
             } catch (e: Exception) {
-                setError("Ошибка загрузки избранного.")
+                setError("Ошибка загрузки избранного. ${e.message}")
                 setLoading(false)
             }
         }

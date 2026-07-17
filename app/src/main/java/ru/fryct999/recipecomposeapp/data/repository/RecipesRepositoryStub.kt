@@ -124,20 +124,24 @@ object RecipesRepositoryStub : RecipesRepository {
         ),
     )
 
-    fun getCategories(): List<CategoryDto> {
+    override suspend fun getCategories(): List<CategoryDto> {
         return categories
     }
 
-    override fun getRecipesByCategoryId(id: Int): List<RecipeDto> {
+    override suspend fun getRecipesByCategory(id: Int): List<RecipeDto> {
         return when (id) {
             0 -> burgerRecipes
             else -> emptyList()
         }
     }
 
-    override fun getRecipeById(id: Int): RecipeDto? {
+    override suspend fun getRecipe(id: Int): RecipeDto {
         return getCategories().asSequence()
             .map { it.id }
-            .firstNotNullOfOrNull { categoryId -> getRecipesByCategoryId(categoryId).firstOrNull { it.id == id } }
+            .firstNotNullOfOrNull  { categoryId ->
+                getRecipesByCategory(categoryId).firstOrNull {
+                    it.id == id
+                }
+            } ?: error("Рецепт с $id не найден.")
     }
 }
