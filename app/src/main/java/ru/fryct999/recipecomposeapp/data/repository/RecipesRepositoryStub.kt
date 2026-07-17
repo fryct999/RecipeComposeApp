@@ -138,11 +138,10 @@ object RecipesRepositoryStub : RecipesRepository {
     override suspend fun getRecipe(id: Int): RecipeDto {
         return getCategories().asSequence()
             .map { it.id }
-            .firstNotNullOf { categoryId ->
+            .firstNotNullOfOrNull  { categoryId ->
                 getRecipesByCategory(categoryId).firstOrNull {
                     it.id == id
                 }
-            }
-
+            } ?: error("Рецепт с $id не найден.")
     }
 }
