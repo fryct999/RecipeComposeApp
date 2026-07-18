@@ -5,19 +5,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import ru.fryct999.recipecomposeapp.core.network.NetworkModule
 import ru.fryct999.recipecomposeapp.core.network.NetworkModule.apiService
 import ru.fryct999.recipecomposeapp.data.repository.RecipesRepositoryImpl
 import ru.fryct999.recipecomposeapp.features.categories.ui.CategoriesScreen
 import ru.fryct999.recipecomposeapp.features.details.presentation.RecipeDetailsViewModel
+import ru.fryct999.recipecomposeapp.features.details.presentation.RecipeDetailsViewModelFactory
 import ru.fryct999.recipecomposeapp.features.details.ui.RecipeDetailsScreen
 import ru.fryct999.recipecomposeapp.features.favorites.ui.FavoritesScreen
 import ru.fryct999.recipecomposeapp.features.recipes.presentation.RecipesViewModel
+import ru.fryct999.recipecomposeapp.features.recipes.presentation.RecipesViewModelFactory
 import ru.fryct999.recipecomposeapp.features.recipes.ui.RecipesScreen
 
 @Composable
@@ -64,12 +66,9 @@ fun AppNavHost(
                 navArgument(Constants.CATEGORY_IMAGE_URL) { type = NavType.StringType },
             ),
         ) { backStackEntry ->
-            val viewModel = remember(backStackEntry) {
-                RecipesViewModel(
-                    savedStateHandle = backStackEntry.savedStateHandle,
-                    repository = repository
-                )
-            }
+            val viewModel: RecipesViewModel = viewModel(
+                factory = RecipesViewModelFactory(backStackEntry.savedStateHandle, repository)
+            )
 
             RecipesScreen(
                 viewModel = viewModel,
@@ -87,14 +86,14 @@ fun AppNavHost(
             ),
         ) { backStackEntry ->
             val context = LocalContext.current
-
-            val viewModel = remember(backStackEntry) {
-                RecipeDetailsViewModel(
+            val viewModel: RecipeDetailsViewModel = viewModel(
+                factory = RecipeDetailsViewModelFactory(
                     context.applicationContext as Application,
                     backStackEntry.savedStateHandle,
                     repository
                 )
-            }
+            )
+
             RecipeDetailsScreen(
                 viewModel = viewModel,
                 modifier = modifier,

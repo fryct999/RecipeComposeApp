@@ -6,7 +6,6 @@ import kotlinx.coroutines.withContext
 import ru.fryct999.recipecomposeapp.core.network.api.RecipesApiService
 import ru.fryct999.recipecomposeapp.data.model.CategoryDto
 import ru.fryct999.recipecomposeapp.data.model.RecipeDto
-import kotlin.collections.emptyList
 
 class RecipesRepositoryImpl(
     private val recipesApiService: RecipesApiService,
@@ -17,7 +16,7 @@ class RecipesRepositoryImpl(
                 recipesApiService.getCategories()
             } catch (e: Exception) {
                 Log.e("RecipesRepository", "Ошибка загрузки категорий: ${e.message}")
-                emptyList()
+                throw e
             }
         }
     }
@@ -39,7 +38,7 @@ class RecipesRepositoryImpl(
                 recipesApiService.getRecipesByCategory(id)
             } catch (e: Exception) {
                 Log.e("RecipesRepository", "Ошибка при загрузке рецептов $id категории. ${e.message}")
-                emptyList()
+                throw e
             }
         }
     }

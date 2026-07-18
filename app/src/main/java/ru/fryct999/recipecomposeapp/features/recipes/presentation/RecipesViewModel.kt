@@ -3,6 +3,7 @@ package ru.fryct999.recipecomposeapp.features.recipes.presentation
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -78,5 +79,15 @@ class RecipesViewModel(
         _uiState.update { currentState ->
             currentState.copy(categoryImageUrl = categoryImageUrl)
         }
+    }
+}
+
+class RecipesViewModelFactory(
+    private val savedStateHandle: SavedStateHandle,
+    private val repository: RecipesRepository
+) : ViewModelProvider.NewInstanceFactory() {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return RecipesViewModel(savedStateHandle, repository) as T
     }
 }
