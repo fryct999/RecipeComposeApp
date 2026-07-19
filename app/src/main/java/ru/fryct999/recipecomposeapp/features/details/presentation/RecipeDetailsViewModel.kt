@@ -3,6 +3,8 @@ package ru.fryct999.recipecomposeapp.features.details.presentation
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -97,5 +99,16 @@ class RecipeDetailsViewModel(
                 favoriteManager.addFavorite(recipeId)
             }
         }
+    }
+}
+
+class RecipeDetailsViewModelFactory(
+    private val application: Application,
+    private val savedStateHandle: SavedStateHandle,
+    private val repository: RecipesRepository
+) : ViewModelProvider.NewInstanceFactory() {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return RecipeDetailsViewModel(application, savedStateHandle, repository) as T
     }
 }
