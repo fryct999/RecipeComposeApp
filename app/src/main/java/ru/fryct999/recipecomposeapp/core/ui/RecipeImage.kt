@@ -1,6 +1,7 @@
 package ru.fryct999.recipecomposeapp.core.ui
 
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
@@ -26,7 +27,14 @@ fun RecipeImage(
     contentDescription: String? = null,
     contentScale: ContentScale = ContentScale.Crop,
 ) {
+    val context = LocalContext.current
     var isLoading by remember { mutableStateOf(true) }
+    val imageRequest = remember(imageUrl, context) {
+        ImageRequest.Builder(context)
+            .data(imageUrl)
+            .crossfade(true)
+            .build()
+    }
 
     BoxWithConstraints(
         modifier = modifier
@@ -34,10 +42,7 @@ fun RecipeImage(
         val indicatorSize = minOf(maxWidth, maxHeight) * 0.15f
 
         AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(imageUrl)
-                .crossfade(true)
-                .build(),
+            model = imageRequest,
             placeholder = painterResource(R.drawable.img_placeholder),
             error = painterResource(R.drawable.img_error),
             contentDescription = contentDescription,
@@ -45,7 +50,7 @@ fun RecipeImage(
             onLoading = { isLoading = true },
             onSuccess = { isLoading = false },
             onError = { isLoading = false },
-            modifier = modifier.matchParentSize()
+            modifier = modifier.fillMaxSize()
         )
 
         if (isLoading) {
