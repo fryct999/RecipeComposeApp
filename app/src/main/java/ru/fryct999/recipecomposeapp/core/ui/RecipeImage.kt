@@ -50,7 +50,7 @@ fun RecipeImage(
             onLoading = { isLoading = true },
             onSuccess = { isLoading = false },
             onError = { isLoading = false },
-            modifier = modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize()
         )
 
         if (isLoading) {
