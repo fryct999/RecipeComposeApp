@@ -136,13 +136,12 @@ object RecipesRepositoryStub : RecipesRepository {
     }
 
     override suspend fun getRecipe(id: Int): RecipeDto {
-        return getCategories().asSequence()
-            .map { it.id }
-            .firstNotNullOf { categoryId ->
-                getRecipesByCategory(categoryId).firstOrNull {
-                    it.id == id
-                }
-            }
-
+        val categories = getCategories()
+        for (category in categories) {
+            val recipes = getRecipesByCategory(category.id)
+            val recipe = recipes.firstOrNull { it.id == id }
+            if (recipe != null) return recipe
+        }
+        throw IllegalStateException("Нет рецепта с id: $id")
     }
 }

@@ -10,7 +10,6 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.fryct999.recipecomposeapp.core.utils.FavoriteDataStoreManager
@@ -33,14 +32,13 @@ class FavoritesViewModel(
             setLoading(true)
             try {
                 favoriteManager.getFavoriteIdsFlow()
-                    .map { ids ->
-                        ids.mapNotNull { id ->
-                            recipesRepository.getRecipe(
-                                id.toIntOrNull() ?: return@mapNotNull null
-                            )?.toUiModel()
+                    .collect { ids ->
+                        val recipes = mutableListOf<RecipeUiModel>()
+                        for (id in ids) {
+                            val intId = id.toIntOrNull() ?: continue
+                            val recipe = recipesRepository.getRecipe(intId)
+                            recipes.add(recipe.toUiModel())
                         }
-                    }
-                    .collect { recipes ->
                         setFavorites(recipes)
                         setLoading(false)
                     }
