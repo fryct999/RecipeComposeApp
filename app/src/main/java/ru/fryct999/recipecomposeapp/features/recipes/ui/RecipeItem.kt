@@ -11,15 +11,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
-import coil3.request.crossfade
-import ru.fryct999.recipecomposeapp.R
+import ru.fryct999.recipecomposeapp.core.ui.RecipeImage
 import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.RecipeUiModel
 import ru.fryct999.recipecomposeapp.ui.theme.Dimens.padding8
 import ru.fryct999.recipecomposeapp.ui.theme.Dimens.recipeItemHeight
@@ -46,15 +40,8 @@ fun RecipeItem(
         Column(
             modifier = Modifier.fillMaxWidth()
         ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(recipe.imageUrl)
-                    .crossfade(true)
-                    .build(),
-                placeholder = painterResource(R.drawable.img_placeholder),
-                error = painterResource(R.drawable.img_error),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
+            RecipeImage(
+                imageUrl = recipe.imageUrl,
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),

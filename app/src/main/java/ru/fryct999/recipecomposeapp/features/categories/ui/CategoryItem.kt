@@ -12,16 +12,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
-import coil3.request.crossfade
-import ru.fryct999.recipecomposeapp.R
+import ru.fryct999.recipecomposeapp.core.ui.RecipeImage
 import ru.fryct999.recipecomposeapp.ui.Constants.DESCRIPTION_LINE_CATEGORY_ITEM
 import ru.fryct999.recipecomposeapp.features.categories.presentation.model.CategoryUiModel
 import ru.fryct999.recipecomposeapp.ui.theme.Dimens.padding8
@@ -44,16 +38,9 @@ fun CategoryItem(
         shape = shape,
 
         ) {
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(category.imageUrl)
-                .crossfade(true)
-                .build(),
-            placeholder = painterResource(R.drawable.img_placeholder),
-            error = painterResource(R.drawable.img_error),
-            contentDescription = category.description,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.aspectRatio(1.2f)
+        RecipeImage(
+            imageUrl = category.imageUrl,
+            modifier = Modifier.aspectRatio(1.2f),
         )
 
         Column(

@@ -4,7 +4,7 @@ import android.os.Parcelable
 import androidx.compose.runtime.Immutable
 import kotlinx.parcelize.Parcelize
 import ru.fryct999.recipecomposeapp.data.model.RecipeDto
-import ru.fryct999.recipecomposeapp.ui.getImagePath
+import ru.fryct999.recipecomposeapp.core.utils.getImagePath
 
 @Immutable
 @Parcelize
@@ -20,9 +20,9 @@ data class RecipeUiModel(
 fun RecipeDto.toUiModel() = RecipeUiModel(
     id = id,
     title = title,
-    imageUrl = getImagePath(imageUrl),
     ingredients = ingredients.map { it.toUiModel() },
     method = method,
+    imageUrl = getImagePath(imageUrl),
 )
 
 
