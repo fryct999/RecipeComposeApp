@@ -13,7 +13,7 @@ abstract class RecipesDatabase : RoomDatabase() {
 
     companion object {
         fun buildDatabase(context: Context) : RecipesDatabase {
-            return Room.databaseBuilder(context, RecipesDatabase::class.java, "recipes_database").fallbackToDestructiveMigration(dropAllTables = true).build()
+            return Room.databaseBuilder(context, RecipesDatabase::class.java, "recipes_database").fallbackToDestructiveMigration().build()
         }
     }
 }
