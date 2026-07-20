@@ -20,7 +20,7 @@ okhttpBom = "5.4.0"
 retrofit = "3.0.0"
 retrofit2KotlinxSerializationConverter = "1.0.0"
 roomRuntime = "2.8.4"
-
+ksp = "2.3.10"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -61,5 +61,4 @@ androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref =
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-ksp = { id = "com.google.devtools.ksp", version = "2.3.10" }
-
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
