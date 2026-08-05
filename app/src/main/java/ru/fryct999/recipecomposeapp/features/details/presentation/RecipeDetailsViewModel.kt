@@ -6,6 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -45,15 +46,18 @@ class RecipeDetailsViewModel(
         setLoading(true)
         viewModelScope.launch {
             try {
+                updatePortions(1)
+
                 repository.getRecipe(recipeId).collect { recipeEntity ->
                     val recipe = recipeEntity?.toUiModel() ?: return@collect
                     setRecipe(recipe)
-                    updatePortions(1)
                     setIngredients(recipe.ingredients)
                     setLoading(false)
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
-                setError("Ошибка при загрузке списка ингредиентов. ${e.message}")
+                setError("Не удалось загрузить рецепт: ${e.message}")
                 setLoading(false)
             }
         }
