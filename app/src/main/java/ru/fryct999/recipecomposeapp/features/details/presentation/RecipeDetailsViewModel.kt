@@ -30,12 +30,23 @@ class RecipeDetailsViewModel(
     val uiState: StateFlow<RecipeDetailsUiState> = _uiState.asStateFlow()
 
     init {
+        loadRecipeById()
+
+        viewModelScope.launch {
+            favoriteManager.getFavoriteIdsFlow()
+                .collect { favoriteIds ->
+                    val isFavorite = favoriteIds.contains(recipeId.toString())
+                    _uiState.update { it.copy(isFavorite = isFavorite) }
+                }
+        }
+    }
+
+    private fun loadRecipeById() {
         setLoading(true)
         viewModelScope.launch {
             try {
                 repository.getRecipe(recipeId).collect { recipeEntity ->
                     val recipe = recipeEntity?.toUiModel() ?: return@collect
-
                     setRecipe(recipe)
                     updatePortions(1)
                     setIngredients(recipe.ingredients)
@@ -44,14 +55,6 @@ class RecipeDetailsViewModel(
             } catch (e: Exception) {
                 setError("Ошибка при загрузке списка ингредиентов. ${e.message}")
             }
-        }
-
-        viewModelScope.launch {
-            favoriteManager.getFavoriteIdsFlow()
-                .collect { favoriteIds ->
-                    val isFavorite = favoriteIds.contains(recipeId.toString())
-                    _uiState.update { it.copy(isFavorite = isFavorite) }
-                }
         }
     }
 
