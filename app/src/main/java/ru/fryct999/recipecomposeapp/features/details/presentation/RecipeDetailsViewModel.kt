@@ -54,6 +54,7 @@ class RecipeDetailsViewModel(
                 }
             } catch (e: Exception) {
                 setError("Ошибка при загрузке списка ингредиентов. ${e.message}")
+                setLoading(false)
             }
         }
     }
