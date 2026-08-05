@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import ru.fryct999.recipecomposeapp.core.network.NetworkModule.apiService
+import ru.fryct999.recipecomposeapp.data.database.RecipesDatabase
 import ru.fryct999.recipecomposeapp.data.repository.RecipesRepositoryImpl
 import ru.fryct999.recipecomposeapp.features.categories.ui.CategoriesScreen
 import ru.fryct999.recipecomposeapp.features.details.presentation.RecipeDetailsViewModel
@@ -27,7 +28,13 @@ fun AppNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
-    val repository = remember { RecipesRepositoryImpl(apiService) }
+    val db = RecipesDatabase.buildDatabase(LocalContext.current)
+    val repository = remember {
+        RecipesRepositoryImpl(
+            recipesApiService = apiService,
+            database = db,
+        )
+    }
 
     NavHost(
         navController = navController,
@@ -54,6 +61,7 @@ fun AppNavHost(
                 onRecipeClick = { recipeId ->
                     navController.navigate(Destination.RecipeDetails.createRoute(recipeId))
                 },
+                repository = repository,
                 modifier = modifier,
             )
         }
