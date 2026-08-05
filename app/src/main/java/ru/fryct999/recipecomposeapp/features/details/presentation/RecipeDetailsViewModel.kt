@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.fryct999.recipecomposeapp.core.utils.FavoriteDataStoreManager
-import ru.fryct999.recipecomposeapp.data.model.RecipeDto
 import ru.fryct999.recipecomposeapp.data.repository.RecipesRepository
 import ru.fryct999.recipecomposeapp.features.details.presentation.model.RecipeDetailsUiState
 import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.IngredientUiModel
@@ -34,19 +33,16 @@ class RecipeDetailsViewModel(
         setLoading(true)
         viewModelScope.launch {
             try {
-                val recipe = loadRecipe(recipeId)
+                repository.getRecipe(recipeId).collect { recipeEntity ->
+                    val recipe = recipeEntity?.toUiModel() ?: return@collect
 
-                val ingredientsList = recipe.ingredients.map { ingredient ->
-                    ingredient.toUiModel()
+                    setRecipe(recipe)
+                    updatePortions(1)
+                    setIngredients(recipe.ingredients)
+                    setLoading(false)
                 }
-
-                setRecipe(recipe.toUiModel())
-                updatePortions(1)
-                setIngredients(ingredientsList)
             } catch (e: Exception) {
                 setError("Ошибка при загрузке списка ингредиентов. ${e.message}")
-            } finally {
-                setLoading(false)
             }
         }
 
@@ -58,8 +54,6 @@ class RecipeDetailsViewModel(
                 }
         }
     }
-
-    private suspend fun loadRecipe(recipeId: Int): RecipeDto = repository.getRecipe(recipeId)
 
     private fun setLoading(loading: Boolean) {
         _uiState.update { currentState ->
