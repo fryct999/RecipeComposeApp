@@ -1,10 +1,13 @@
 package ru.fryct999.recipecomposeapp.data.repository
 
+import kotlinx.coroutines.flow.Flow
 import ru.fryct999.recipecomposeapp.data.model.CategoryDto
 import ru.fryct999.recipecomposeapp.data.model.RecipeDto
 
 interface RecipesRepository {
-    suspend fun getCategories(): List<CategoryDto>
+    fun getCategories(): Flow<List<CategoryDto>>
     suspend fun getRecipe(id: Int): RecipeDto
-    suspend fun getRecipesByCategory(id: Int): List<RecipeDto>
+    fun getRecipesByCategory(categoryId: Int): Flow<List<RecipeDto>>
+
+    fun getRecipesByIds(ids: List<Int>): Flow<List<RecipeDto>>
 }

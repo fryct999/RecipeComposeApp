@@ -10,6 +10,8 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.fryct999.recipecomposeapp.core.utils.FavoriteDataStoreManager
@@ -20,7 +22,7 @@ import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.toUiMode
 
 class FavoritesViewModel(
     application: Application,
-    recipesRepository: RecipesRepository,
+    repository: RecipesRepository,
 ) : AndroidViewModel(application) {
     private val favoriteManager = FavoriteDataStoreManager(application)
 
@@ -28,30 +30,24 @@ class FavoritesViewModel(
     val uiState: StateFlow<FavoritesUiState> = _uiState.asStateFlow()
 
     init {
+
         viewModelScope.launch {
-            setLoading(true)
             try {
                 favoriteManager.getFavoriteIdsFlow()
-                    .collect { ids ->
-                        val recipes = mutableListOf<RecipeUiModel>()
-                        for (id in ids) {
-                            val intId = id.toIntOrNull() ?: continue
-                            val recipe = recipesRepository.getRecipe(intId)
-                            recipes.add(recipe.toUiModel())
+                    .flatMapLatest { ids ->
+                        val intIds = ids.mapNotNull { it.toIntOrNull() }
+                        if (intIds.isEmpty()) {
+                            flowOf(emptyList())
+                        } else {
+                            repository.getRecipesByIds(intIds)
                         }
-                        setFavorites(recipes)
-                        setLoading(false)
+                    }
+                    .collect { recipes ->
+                        setFavorites(recipes.map { it.toUiModel() })
                     }
             } catch (e: Exception) {
-                setError("Ошибка загрузки избранного. ${e.message}")
-                setLoading(false)
+                setError("Ошибка при загрузке избранных рецептов: ${e.message}")
             }
-        }
-    }
-
-    private fun setLoading(loading: Boolean) {
-        _uiState.update { currentState ->
-            currentState.copy(isLoading = loading)
         }
     }
 
@@ -75,7 +71,7 @@ class FavoritesViewModelFactory(
         val application = extras[APPLICATION_KEY] ?: error("Application not available")
         return FavoritesViewModel(
             application = application,
-            recipesRepository = recipesRepository
+            repository = recipesRepository
         ) as T
     }
 }

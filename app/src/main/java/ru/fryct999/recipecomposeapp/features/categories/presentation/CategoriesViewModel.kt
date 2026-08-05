@@ -24,21 +24,14 @@ class CategoriesViewModel(
     }
 
     private fun loadCategories() {
-        setLoading(true)
         viewModelScope.launch {
             try {
-                setCategories(recipeRepository.getCategories().map { it.toUiModel() })
+                recipeRepository.getCategories().collect { categories ->
+                    setCategories(categories.map { it.toUiModel() })
+                }
             } catch (e: Exception) {
                 setError("Ошибка при загрузке списка категорий. ${e.message}")
-            } finally {
-                setLoading(false)
             }
-        }
-    }
-
-    private fun setLoading(loading: Boolean) {
-        _uiState.update { currentState ->
-            currentState.copy(isLoading = loading)
         }
     }
 

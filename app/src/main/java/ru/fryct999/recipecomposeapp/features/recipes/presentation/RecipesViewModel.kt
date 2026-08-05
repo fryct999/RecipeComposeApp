@@ -30,30 +30,21 @@ class RecipesViewModel(
     }
 
     private fun loadRecipes() {
-        setLoading(true)
         viewModelScope.launch {
             try {
-                val categoryTitle = Uri.decode(savedStateHandle.get<String>(CATEGORY_TITLE))
-                val categoryImageUrl = Uri.decode(savedStateHandle.get<String>(CATEGORY_IMAGE_URL))
+                val categoryTitle = Uri.decode(savedStateHandle.get<String>(CATEGORY_TITLE)) ?: ""
+                val categoryImageUrl = Uri.decode(savedStateHandle.get<String>(CATEGORY_IMAGE_URL)) ?: ""
                 val categoryId = savedStateHandle.get<Int>(CATEGORY_ID) ?: -1
-                val recipes = repository.getRecipesByCategory(categoryId).map { dto ->
-                    dto.toUiModel()
-                }
 
-                setRecipes(recipes)
                 setTitle(categoryTitle)
                 setCategoryImageUrl(categoryImageUrl)
+
+                repository.getRecipesByCategory(categoryId).collect { recipeDtos ->
+                    setRecipes(recipeDtos.map { it.toUiModel() })
+                }
             } catch (e: Exception) {
                 setError("Ошибка при загрузке списка рецептов. ${e.message}")
-            } finally {
-                setLoading(false)
             }
-        }
-    }
-
-    private fun setLoading(loading: Boolean) {
-        _uiState.update { currentState ->
-            currentState.copy(isLoading = loading)
         }
     }
 
