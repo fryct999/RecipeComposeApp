@@ -6,7 +6,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import ru.fryct999.recipecomposeapp.core.network.api.RecipesApiService
 import ru.fryct999.recipecomposeapp.data.database.RecipesDatabase
 import ru.fryct999.recipecomposeapp.data.model.CategoryDto
@@ -39,15 +38,18 @@ class RecipesRepositoryImpl(
         }
     }
 
-    override suspend fun getRecipe(id: Int): RecipeDto {
-        return withContext(Dispatchers.IO) {
+    override fun getRecipe(recipeId: Int): Flow<RecipeDto?> {
+        CoroutineScope(Dispatchers.IO).launch {
             try {
-                recipesApiService.getRecipe(id)
+                recipesApiService.getRecipe(recipeId)
+                Log.d(TAG, "Детали рецепта получены из API")
             } catch (e: Exception) {
-                Log.e("RecipesRepository", "Ошибка при загрузке рецепта с id $id. ${e.message}")
-                throw IllegalStateException("Нет рецепта с id: $id")
+                Log.e(TAG, "Ошибка обновления: ${e.message}")
             }
         }
+
+        return recipeDao.getRecipeById(recipeId)
+            .map { entity -> entity?.toDto() }
     }
 
     override fun getRecipesByCategory(categoryId: Int): Flow<List<RecipeDto>> {

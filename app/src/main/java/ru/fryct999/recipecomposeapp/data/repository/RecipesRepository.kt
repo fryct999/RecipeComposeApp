@@ -6,7 +6,7 @@ import ru.fryct999.recipecomposeapp.data.model.RecipeDto
 
 interface RecipesRepository {
     fun getCategories(): Flow<List<CategoryDto>>
-    suspend fun getRecipe(id: Int): RecipeDto
+    fun getRecipe(id: Int): Flow<RecipeDto?>
     fun getRecipesByCategory(categoryId: Int): Flow<List<RecipeDto>>
 
     fun getRecipesByIds(ids: List<Int>): Flow<List<RecipeDto>>
