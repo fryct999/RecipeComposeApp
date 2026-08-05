@@ -28,7 +28,11 @@ fun AppNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
-    val db = RecipesDatabase.buildDatabase(LocalContext.current)
+    val context = LocalContext.current
+    val db = remember(context) {
+        RecipesDatabase.buildDatabase(context)
+    }
+
     val repository = remember {
         RecipesRepositoryImpl(
             recipesApiService = apiService,
