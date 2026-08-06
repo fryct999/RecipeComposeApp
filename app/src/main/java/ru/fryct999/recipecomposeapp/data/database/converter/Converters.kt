@@ -2,7 +2,7 @@ package ru.fryct999.recipecomposeapp.data.database.converter
 
 import androidx.room.TypeConverter
 
-class Converters {
+object Converters {
     @TypeConverter
     fun fromString(value: String): List<String> = if (value.isEmpty()) emptyList() else value.split("|||")
 

@@ -14,10 +14,14 @@ import androidx.navigation.navArgument
 import ru.fryct999.recipecomposeapp.core.network.NetworkModule.apiService
 import ru.fryct999.recipecomposeapp.data.database.RecipesDatabase
 import ru.fryct999.recipecomposeapp.data.repository.RecipesRepositoryImpl
+import ru.fryct999.recipecomposeapp.features.categories.presentation.CategoriesViewModel
+import ru.fryct999.recipecomposeapp.features.categories.presentation.CategoriesViewModelFactory
 import ru.fryct999.recipecomposeapp.features.categories.ui.CategoriesScreen
 import ru.fryct999.recipecomposeapp.features.details.presentation.RecipeDetailsViewModel
 import ru.fryct999.recipecomposeapp.features.details.presentation.RecipeDetailsViewModelFactory
 import ru.fryct999.recipecomposeapp.features.details.ui.RecipeDetailsScreen
+import ru.fryct999.recipecomposeapp.features.favorites.presentation.FavoritesViewModel
+import ru.fryct999.recipecomposeapp.features.favorites.presentation.FavoritesViewModelFactory
 import ru.fryct999.recipecomposeapp.features.favorites.ui.FavoritesScreen
 import ru.fryct999.recipecomposeapp.features.recipes.presentation.RecipesViewModel
 import ru.fryct999.recipecomposeapp.features.recipes.presentation.RecipesViewModelFactory
@@ -45,8 +49,12 @@ fun AppNavHost(
         startDestination = Destination.Categories.route,
     ) {
         composable(route = Destination.Categories.route) {
+            val viewModel: CategoriesViewModel = viewModel(
+                factory = CategoriesViewModelFactory(repository = repository)
+            )
+
             CategoriesScreen(
-                repository = repository,
+                viewModel = viewModel,
                 onCategoryClick = { categoryId, categoryTitle, categoryImageUrl ->
                     navController.navigate(
                         Destination.Recipes.createRoute(
@@ -61,11 +69,15 @@ fun AppNavHost(
         }
 
         composable(route = Destination.Favorite.route) {
+            val viewModel: FavoritesViewModel = viewModel(
+                factory = FavoritesViewModelFactory(recipesRepository = repository)
+            )
+
             FavoritesScreen(
                 onRecipeClick = { recipeId ->
                     navController.navigate(Destination.RecipeDetails.createRoute(recipeId))
                 },
-                repository = repository,
+                viewModel = viewModel,
                 modifier = modifier,
             )
         }
