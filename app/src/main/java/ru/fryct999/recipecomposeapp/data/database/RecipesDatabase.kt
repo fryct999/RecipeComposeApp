@@ -12,15 +12,19 @@ import ru.fryct999.recipecomposeapp.data.database.entity.CategoryEntity
 import ru.fryct999.recipecomposeapp.data.database.entity.RecipeEntity
 
 @TypeConverters(Converters::class)
-@Database(entities = [CategoryEntity::class, RecipeEntity::class], version = 2, exportSchema = false)
+@Database(
+    entities = [CategoryEntity::class, RecipeEntity::class],
+    version = 2,
+    exportSchema = false
+)
 abstract class RecipesDatabase : RoomDatabase() {
     abstract fun categoryDao(): CategoryDao
     abstract fun recipeDao(): RecipeDao
 
     companion object {
-        fun buildDatabase(context: Context) : RecipesDatabase {
-            return Room.databaseBuilder(context, RecipesDatabase::class.java, "recipes_database").fallbackToDestructiveMigration().build()
+        fun buildDatabase(context: Context): RecipesDatabase {
+            return Room.databaseBuilder(context, RecipesDatabase::class.java, "recipes_database")
+                .fallbackToDestructiveMigration().build()
         }
     }
 }
-

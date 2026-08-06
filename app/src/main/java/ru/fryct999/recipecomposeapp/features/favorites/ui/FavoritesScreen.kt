@@ -16,12 +16,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.fryct999.recipecomposeapp.R
 import ru.fryct999.recipecomposeapp.core.ui.ScreenHeader
-import ru.fryct999.recipecomposeapp.data.repository.RecipesRepository
 import ru.fryct999.recipecomposeapp.features.favorites.presentation.FavoritesViewModel
-import ru.fryct999.recipecomposeapp.features.favorites.presentation.FavoritesViewModelFactory
 import ru.fryct999.recipecomposeapp.features.recipes.ui.RecipeItem
 import ru.fryct999.recipecomposeapp.ui.theme.Dimens.padding16
 import ru.fryct999.recipecomposeapp.ui.theme.Dimens.padding8
@@ -29,14 +26,9 @@ import ru.fryct999.recipecomposeapp.ui.theme.Dimens.padding8
 @Composable
 fun FavoritesScreen(
     onRecipeClick: (Int) -> Unit,
-    repository: RecipesRepository,
+    viewModel: FavoritesViewModel,
     modifier: Modifier = Modifier,
 ) {
-    val viewModel: FavoritesViewModel = viewModel(
-        factory = FavoritesViewModelFactory(repository)
-    )
-
-    //val viewModel: FavoritesViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
 
     Column(

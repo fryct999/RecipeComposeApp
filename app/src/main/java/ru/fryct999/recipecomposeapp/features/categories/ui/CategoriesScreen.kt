@@ -17,23 +17,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.fryct999.recipecomposeapp.R
 import ru.fryct999.recipecomposeapp.core.ui.ScreenHeader
-import ru.fryct999.recipecomposeapp.data.repository.RecipesRepository
 import ru.fryct999.recipecomposeapp.features.categories.presentation.CategoriesViewModel
-import ru.fryct999.recipecomposeapp.features.categories.presentation.CategoriesViewModelFactory
 import ru.fryct999.recipecomposeapp.ui.theme.Dimens.padding16
 
 @Composable
 fun CategoriesScreen(
-    repository: RecipesRepository,
+    viewModel: CategoriesViewModel,
     onCategoryClick: (Int, String, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val viewModel: CategoriesViewModel = viewModel(
-        factory = CategoriesViewModelFactory(repository)
-    )
     val uiState by viewModel.uiState.collectAsState()
 
     Column(

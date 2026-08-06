@@ -20,13 +20,13 @@ fun RecipeDto.toEntity(categoryId: Int) = RecipeEntity(
     categoryId = categoryId,
     imageUrl = imageUrl,
     ingredients = Json.encodeToString(ingredients),
-    method = Converters().fromList(method),
+    method = Converters.fromList(method),
 )
 
 fun RecipeEntity.toDto() = RecipeDto(
     id = id,
     title = title,
     ingredients = Json.decodeFromString<List<IngredientDto>>(ingredients),
-    method = Converters().fromString(method),
+    method = Converters.fromString(method),
     imageUrl = imageUrl,
 )
