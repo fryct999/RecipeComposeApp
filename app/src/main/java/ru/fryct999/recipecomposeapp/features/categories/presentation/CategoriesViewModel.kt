@@ -2,6 +2,7 @@ package ru.fryct999.recipecomposeapp.features.categories.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -11,8 +12,10 @@ import ru.fryct999.recipecomposeapp.data.repository.RecipesRepository
 import ru.fryct999.recipecomposeapp.features.categories.presentation.model.CategoriesUiState
 import ru.fryct999.recipecomposeapp.features.categories.presentation.model.CategoryUiModel
 import ru.fryct999.recipecomposeapp.features.categories.presentation.model.toUiModel
+import javax.inject.Inject
 
-class CategoriesViewModel(
+@HiltViewModel
+class CategoriesViewModel @Inject constructor(
     private val recipeRepository: RecipesRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CategoriesUiState())

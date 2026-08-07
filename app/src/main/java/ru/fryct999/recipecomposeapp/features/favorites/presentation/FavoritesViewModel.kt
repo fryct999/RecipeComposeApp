@@ -1,8 +1,8 @@
 package ru.fryct999.recipecomposeapp.features.favorites.presentation
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,13 +15,13 @@ import ru.fryct999.recipecomposeapp.data.repository.RecipesRepository
 import ru.fryct999.recipecomposeapp.features.favorites.presentation.model.FavoritesUiState
 import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.RecipeUiModel
 import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.toUiModel
+import javax.inject.Inject
 
-class FavoritesViewModel(
-    application: Application,
-    repository: RecipesRepository,
-) : AndroidViewModel(application) {
-    private val favoriteManager = FavoriteDataStoreManager(application)
-
+@HiltViewModel
+class FavoritesViewModel @Inject constructor(
+    private val repository: RecipesRepository,
+    private val favoriteManager: FavoriteDataStoreManager,
+) : ViewModel() {
     private val _uiState = MutableStateFlow(FavoritesUiState())
     val uiState: StateFlow<FavoritesUiState> = _uiState.asStateFlow()
 

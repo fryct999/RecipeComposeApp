@@ -1,9 +1,9 @@
 package ru.fryct999.recipecomposeapp.features.details.presentation
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,13 +17,14 @@ import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.Ingredie
 import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.RecipeUiModel
 import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.toUiModel
 import ru.fryct999.recipecomposeapp.navigation.Constants.PARAM_RECIPE_ID
+import javax.inject.Inject
 
-class RecipeDetailsViewModel(
-    application: Application,
+@HiltViewModel
+class RecipeDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val repository: RecipesRepository,
-) : AndroidViewModel(application) {
-    private val favoriteManager = FavoriteDataStoreManager(application)
+    private val favoriteManager: FavoriteDataStoreManager,
+) : ViewModel() {
     private val recipeId = savedStateHandle.get<Int>(PARAM_RECIPE_ID) ?: -1
     private val _uiState = MutableStateFlow(RecipeDetailsUiState())
     val uiState: StateFlow<RecipeDetailsUiState> = _uiState.asStateFlow()

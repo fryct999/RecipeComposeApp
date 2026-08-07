@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,8 +17,10 @@ import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.toUiMode
 import ru.fryct999.recipecomposeapp.navigation.Constants.CATEGORY_ID
 import ru.fryct999.recipecomposeapp.navigation.Constants.CATEGORY_IMAGE_URL
 import ru.fryct999.recipecomposeapp.navigation.Constants.CATEGORY_TITLE
+import javax.inject.Inject
 
-class RecipesViewModel(
+@HiltViewModel
+class RecipesViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val repository: RecipesRepository,
 ) : ViewModel() {
