@@ -14,20 +14,30 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import ru.fryct999.recipecomposeapp.R
 import ru.fryct999.recipecomposeapp.core.ui.ScreenHeader
+import ru.fryct999.recipecomposeapp.di.CategoriesViewModelFactory
+import ru.fryct999.recipecomposeapp.di.RecipeApplication
 import ru.fryct999.recipecomposeapp.features.categories.presentation.CategoriesViewModel
 import ru.fryct999.recipecomposeapp.ui.theme.Dimens.padding16
 
 @Composable
 fun CategoriesScreen(
-    viewModel: CategoriesViewModel,
     onCategoryClick: (Int, String, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val appContainer = (LocalContext.current.applicationContext as RecipeApplication).appContainer
+    val viewModel: CategoriesViewModel = remember {
+        CategoriesViewModelFactory(
+            repository = appContainer.recipesRepository,
+        ).create()
+    }
+
     val uiState by viewModel.uiState.collectAsState()
 
     Column(
