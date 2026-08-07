@@ -10,12 +10,10 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import ru.fryct999.recipecomposeapp.di.CategoriesViewModelFactory
 import ru.fryct999.recipecomposeapp.di.FavoritesViewModelFactory
 import ru.fryct999.recipecomposeapp.di.RecipeApplication
 import ru.fryct999.recipecomposeapp.di.RecipeDetailsViewModelFactory
 import ru.fryct999.recipecomposeapp.di.RecipesViewModelFactory
-import ru.fryct999.recipecomposeapp.features.categories.presentation.CategoriesViewModel
 import ru.fryct999.recipecomposeapp.features.categories.ui.CategoriesScreen
 import ru.fryct999.recipecomposeapp.features.details.presentation.RecipeDetailsViewModel
 import ru.fryct999.recipecomposeapp.features.details.ui.RecipeDetailsScreen
@@ -37,14 +35,8 @@ fun AppNavHost(
         startDestination = Destination.Categories.route,
     ) {
         composable(route = Destination.Categories.route) {
-            val viewModel: CategoriesViewModel = remember {
-                CategoriesViewModelFactory(
-                    repository = appContainer.recipesRepository,
-                ).create()
-            }
-
             CategoriesScreen(
-                viewModel = viewModel,
+                //viewModel = viewModel,
                 onCategoryClick = { categoryId, categoryTitle, categoryImageUrl ->
                     navController.navigate(
                         Destination.Recipes.createRoute(
