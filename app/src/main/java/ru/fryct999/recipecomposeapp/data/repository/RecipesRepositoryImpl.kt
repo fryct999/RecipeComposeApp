@@ -12,10 +12,11 @@ import ru.fryct999.recipecomposeapp.data.model.CategoryDto
 import ru.fryct999.recipecomposeapp.data.model.RecipeDto
 import ru.fryct999.recipecomposeapp.data.model.toDto
 import ru.fryct999.recipecomposeapp.data.model.toEntity
+import javax.inject.Inject
 
 private const val TAG = "RecipesRepositoryImpl"
 
-class RecipesRepositoryImpl(
+class RecipesRepositoryImpl @Inject constructor(
     private val recipesApiService: RecipesApiService,
     private val database: RecipesDatabase,
 ) : RecipesRepository {
