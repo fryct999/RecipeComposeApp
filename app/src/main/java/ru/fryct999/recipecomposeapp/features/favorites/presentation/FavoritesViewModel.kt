@@ -2,11 +2,7 @@ package ru.fryct999.recipecomposeapp.features.favorites.presentation
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.CreationExtras
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,7 +26,6 @@ class FavoritesViewModel(
     val uiState: StateFlow<FavoritesUiState> = _uiState.asStateFlow()
 
     init {
-
         viewModelScope.launch {
             try {
                 favoriteManager.getFavoriteIdsFlow()
@@ -61,17 +56,5 @@ class FavoritesViewModel(
         _uiState.update { currentState ->
             currentState.copy(favoriteRecipes = favorites)
         }
-    }
-}
-
-class FavoritesViewModelFactory(
-    private val recipesRepository: RecipesRepository
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
-        val application = extras[APPLICATION_KEY] ?: error("Application not available")
-        return FavoritesViewModel(
-            application = application,
-            repository = recipesRepository
-        ) as T
     }
 }

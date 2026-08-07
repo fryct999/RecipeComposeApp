@@ -5,26 +5,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import ru.fryct999.recipecomposeapp.core.network.NetworkModule.apiService
-import ru.fryct999.recipecomposeapp.data.database.RecipesDatabase
-import ru.fryct999.recipecomposeapp.data.repository.RecipesRepositoryImpl
+import ru.fryct999.recipecomposeapp.di.CategoriesViewModelFactory
+import ru.fryct999.recipecomposeapp.di.FavoritesViewModelFactory
+import ru.fryct999.recipecomposeapp.di.RecipeApplication
+import ru.fryct999.recipecomposeapp.di.RecipeDetailsViewModelFactory
+import ru.fryct999.recipecomposeapp.di.RecipesViewModelFactory
 import ru.fryct999.recipecomposeapp.features.categories.presentation.CategoriesViewModel
-import ru.fryct999.recipecomposeapp.features.categories.presentation.CategoriesViewModelFactory
 import ru.fryct999.recipecomposeapp.features.categories.ui.CategoriesScreen
 import ru.fryct999.recipecomposeapp.features.details.presentation.RecipeDetailsViewModel
-import ru.fryct999.recipecomposeapp.features.details.presentation.RecipeDetailsViewModelFactory
 import ru.fryct999.recipecomposeapp.features.details.ui.RecipeDetailsScreen
 import ru.fryct999.recipecomposeapp.features.favorites.presentation.FavoritesViewModel
-import ru.fryct999.recipecomposeapp.features.favorites.presentation.FavoritesViewModelFactory
 import ru.fryct999.recipecomposeapp.features.favorites.ui.FavoritesScreen
 import ru.fryct999.recipecomposeapp.features.recipes.presentation.RecipesViewModel
-import ru.fryct999.recipecomposeapp.features.recipes.presentation.RecipesViewModelFactory
 import ru.fryct999.recipecomposeapp.features.recipes.ui.RecipesScreen
 
 @Composable
@@ -32,26 +29,19 @@ fun AppNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-    val db = remember(context) {
-        RecipesDatabase.buildDatabase(context)
-    }
-
-    val repository = remember {
-        RecipesRepositoryImpl(
-            recipesApiService = apiService,
-            database = db,
-        )
-    }
+    val appContainer = (LocalContext.current.applicationContext as RecipeApplication).appContainer
+    val application = LocalContext.current.applicationContext as Application
 
     NavHost(
         navController = navController,
         startDestination = Destination.Categories.route,
     ) {
         composable(route = Destination.Categories.route) {
-            val viewModel: CategoriesViewModel = viewModel(
-                factory = CategoriesViewModelFactory(repository = repository)
-            )
+            val viewModel: CategoriesViewModel = remember {
+                CategoriesViewModelFactory(
+                    repository = appContainer.recipesRepository,
+                ).create()
+            }
 
             CategoriesScreen(
                 viewModel = viewModel,
@@ -69,9 +59,12 @@ fun AppNavHost(
         }
 
         composable(route = Destination.Favorite.route) {
-            val viewModel: FavoritesViewModel = viewModel(
-                factory = FavoritesViewModelFactory(recipesRepository = repository)
-            )
+            val viewModel: FavoritesViewModel = remember {
+                FavoritesViewModelFactory(
+                    application = application,
+                    repository = appContainer.recipesRepository,
+                ).create()
+            }
 
             FavoritesScreen(
                 onRecipeClick = { recipeId ->
@@ -90,9 +83,12 @@ fun AppNavHost(
                 navArgument(Constants.CATEGORY_IMAGE_URL) { type = NavType.StringType },
             ),
         ) { backStackEntry ->
-            val viewModel: RecipesViewModel = viewModel(
-                factory = RecipesViewModelFactory(backStackEntry.savedStateHandle, repository)
-            )
+            val viewModel: RecipesViewModel = remember {
+                RecipesViewModelFactory(
+                    savedStateHandle = backStackEntry.savedStateHandle,
+                    repository = appContainer.recipesRepository,
+                ).create()
+            }
 
             RecipesScreen(
                 viewModel = viewModel,
@@ -109,14 +105,13 @@ fun AppNavHost(
                 navArgument(Constants.PARAM_RECIPE_ID) { type = NavType.IntType },
             ),
         ) { backStackEntry ->
-            val context = LocalContext.current
-            val viewModel: RecipeDetailsViewModel = viewModel(
-                factory = RecipeDetailsViewModelFactory(
-                    context.applicationContext as Application,
-                    backStackEntry.savedStateHandle,
-                    repository
-                )
-            )
+            val viewModel: RecipeDetailsViewModel = remember {
+                RecipeDetailsViewModelFactory(
+                    application = application,
+                    savedStateHandle = backStackEntry.savedStateHandle,
+                    repository = appContainer.recipesRepository,
+                ).create()
+            }
 
             RecipeDetailsScreen(
                 viewModel = viewModel,
