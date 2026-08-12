@@ -11,10 +11,10 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.fryct999.recipecomposeapp.core.utils.FavoriteDataStoreManager
+import ru.fryct999.recipecomposeapp.data.model.toUiModel
 import ru.fryct999.recipecomposeapp.data.repository.RecipesRepository
 import ru.fryct999.recipecomposeapp.features.favorites.presentation.model.FavoritesUiState
 import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.RecipeUiModel
-import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.toUiModel
 import javax.inject.Inject
 
 @HiltViewModel

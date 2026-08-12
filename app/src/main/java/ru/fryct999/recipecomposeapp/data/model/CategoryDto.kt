@@ -1,7 +1,9 @@
 package ru.fryct999.recipecomposeapp.data.model
 
 import kotlinx.serialization.Serializable
+import ru.fryct999.recipecomposeapp.core.utils.getImagePath
 import ru.fryct999.recipecomposeapp.data.database.entity.CategoryEntity
+import ru.fryct999.recipecomposeapp.features.categories.presentation.model.CategoryUiModel
 
 @Serializable
 data class CategoryDto(
@@ -23,4 +25,11 @@ fun CategoryEntity.toDto() = CategoryDto(
     title = name,
     description = description,
     imageUrl = imageUrl,
+)
+
+fun CategoryDto.toUiModel() = CategoryUiModel(
+    id = id,
+    title = title,
+    description = description,
+    imageUrl = getImagePath(imageUrl),
 )

@@ -11,10 +11,3 @@ data class CategoryUiModel(
     val description: String,
     val imageUrl: String,
 )
-
-fun CategoryDto.toUiModel() = CategoryUiModel(
-    id = id,
-    title = title,
-    description = description,
-    imageUrl = getImagePath(imageUrl),
-)

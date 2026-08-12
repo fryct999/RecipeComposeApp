@@ -10,10 +10,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ru.fryct999.recipecomposeapp.data.model.toUiModel
 import ru.fryct999.recipecomposeapp.data.repository.RecipesRepository
 import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.RecipeUiModel
 import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.RecipesUiState
-import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.toUiModel
 import ru.fryct999.recipecomposeapp.navigation.Constants.CATEGORY_ID
 import ru.fryct999.recipecomposeapp.navigation.Constants.CATEGORY_IMAGE_URL
 import ru.fryct999.recipecomposeapp.navigation.Constants.CATEGORY_TITLE

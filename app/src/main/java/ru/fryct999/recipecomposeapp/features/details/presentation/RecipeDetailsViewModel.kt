@@ -11,11 +11,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.fryct999.recipecomposeapp.core.utils.FavoriteDataStoreManager
+import ru.fryct999.recipecomposeapp.data.model.toUiModel
 import ru.fryct999.recipecomposeapp.data.repository.RecipesRepository
 import ru.fryct999.recipecomposeapp.features.details.presentation.model.RecipeDetailsUiState
 import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.IngredientUiModel
 import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.RecipeUiModel
-import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.toUiModel
 import ru.fryct999.recipecomposeapp.navigation.Constants.PARAM_RECIPE_ID
 import javax.inject.Inject
 
