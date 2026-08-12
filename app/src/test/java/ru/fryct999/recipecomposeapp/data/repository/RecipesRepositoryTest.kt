@@ -1,6 +1,7 @@
 package ru.fryct999.recipecomposeapp.data.repository
 
 import app.cash.turbine.test
+import fixtures.RecipeTestFixtures
 import io.mockk.Runs
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
@@ -19,8 +20,6 @@ import ru.fryct999.recipecomposeapp.data.database.RecipesDatabase
 import ru.fryct999.recipecomposeapp.data.database.dao.CategoryDao
 import ru.fryct999.recipecomposeapp.data.database.dao.RecipeDao
 import ru.fryct999.recipecomposeapp.data.database.entity.CategoryEntity
-import ru.fryct999.recipecomposeapp.data.model.IngredientDto
-import ru.fryct999.recipecomposeapp.data.model.RecipeDto
 import ru.fryct999.recipecomposeapp.data.model.toEntity
 import java.io.IOException
 
@@ -93,33 +92,8 @@ class RecipesRepositoryTest {
 
     @Test
     fun `getRecipesByCategory returns flow filtered by categoryId`() = runTest {
-        val recipeDtoFirst = RecipeDto(
-            id = 1,
-            title = "Хлеб",
-            imageUrl = "bread.jpg",
-            ingredients = listOf(
-                IngredientDto(
-                    quantity = "4",
-                    unitOfMeasure = "шт",
-                    description = "Посолить и поперчить",
-                )
-            ),
-            method = listOf("Достать хлеб"),
-        )
-
-        val recipeDtoSecond = RecipeDto(
-            id = 2,
-            title = "Сосиска",
-            imageUrl = "bread.jpg",
-            ingredients = listOf(
-                IngredientDto(
-                    quantity = "3",
-                    unitOfMeasure = "шт",
-                    description = "Посолить и поперчить",
-                )
-            ),
-            method = listOf("Достать Сосискe"),
-        )
+        val recipeDtoFirst = RecipeTestFixtures.createRecipeDto(id = 1, title = "Хлеб")
+        val recipeDtoSecond = RecipeTestFixtures.createRecipeDto(id = 2, title = "Сосиска")
 
         every { recipeDao.getRecipesByCategoryId(categoryId = 1) } returns flowOf(
             listOf(
