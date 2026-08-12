@@ -2,8 +2,10 @@ package ru.fryct999.recipecomposeapp.data.model
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import ru.fryct999.recipecomposeapp.core.utils.getImagePath
 import ru.fryct999.recipecomposeapp.data.database.converter.Converters
 import ru.fryct999.recipecomposeapp.data.database.entity.RecipeEntity
+import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.RecipeUiModel
 
 @Serializable
 data class RecipeDto(
@@ -29,4 +31,12 @@ fun RecipeEntity.toDto() = RecipeDto(
     ingredients = Json.decodeFromString<List<IngredientDto>>(ingredients),
     method = Converters.fromString(method),
     imageUrl = imageUrl,
+)
+
+fun RecipeDto.toUiModel() = RecipeUiModel(
+    id = id,
+    title = title,
+    ingredients = ingredients.map { it.toUiModel() },
+    method = method,
+    imageUrl = getImagePath(imageUrl),
 )

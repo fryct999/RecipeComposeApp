@@ -8,10 +8,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ru.fryct999.recipecomposeapp.data.model.toUiModel
 import ru.fryct999.recipecomposeapp.data.repository.RecipesRepository
 import ru.fryct999.recipecomposeapp.features.categories.presentation.model.CategoriesUiState
 import ru.fryct999.recipecomposeapp.features.categories.presentation.model.CategoryUiModel
-import ru.fryct999.recipecomposeapp.features.categories.presentation.model.toUiModel
 import javax.inject.Inject
 
 @HiltViewModel

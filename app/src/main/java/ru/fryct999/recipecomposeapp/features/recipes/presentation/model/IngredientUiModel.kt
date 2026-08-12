@@ -13,10 +13,3 @@ data class IngredientUiModel(
     val originalAmount: Double? = null,
     val unitOfMeasure: String,
 ) : Parcelable
-
-fun IngredientDto.toUiModel() = IngredientUiModel(
-    name = description,
-    amount = quantity,
-    unitOfMeasure = unitOfMeasure,
-    originalAmount = quantity.toDoubleOrNull()
-)
