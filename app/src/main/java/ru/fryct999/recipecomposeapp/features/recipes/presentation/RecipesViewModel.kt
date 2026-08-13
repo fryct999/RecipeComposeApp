@@ -1,6 +1,5 @@
 package ru.fryct999.recipecomposeapp.features.recipes.presentation
 
-import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -34,8 +33,8 @@ class RecipesViewModel @Inject constructor(
     private fun loadRecipes() {
         viewModelScope.launch {
             try {
-                val categoryTitle = Uri.decode(savedStateHandle.get<String>(CATEGORY_TITLE)) ?: ""
-                val categoryImageUrl = Uri.decode(savedStateHandle.get<String>(CATEGORY_IMAGE_URL)) ?: ""
+                val categoryTitle = savedStateHandle.get<String>(CATEGORY_TITLE) ?: ""
+                val categoryImageUrl = savedStateHandle.get<String>(CATEGORY_IMAGE_URL) ?: ""
                 val categoryId = savedStateHandle.get<Int>(CATEGORY_ID) ?: -1
 
                 setTitle(categoryTitle)
