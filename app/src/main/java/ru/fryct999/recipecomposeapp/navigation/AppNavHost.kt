@@ -56,8 +56,8 @@ fun AppNavHost(
             route = Destination.Recipes.route,
             arguments = listOf(
                 navArgument(Constants.CATEGORY_ID) { type = NavType.IntType },
-                navArgument(Constants.CATEGORY_TITLE) { type = NavType.StringType },
-                navArgument(Constants.CATEGORY_IMAGE_URL) { type = NavType.StringType },
+                navArgument(Constants.CATEGORY_TITLE) { type = DecodedStringNavType() },
+                navArgument(Constants.CATEGORY_IMAGE_URL) { type = DecodedStringNavType() },
             ),
         ) { backStackEntry ->
             val viewModel: RecipesViewModel = hiltViewModel()

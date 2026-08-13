@@ -25,7 +25,7 @@ class CategoriesViewModel @Inject constructor(
         loadCategories()
     }
 
-    private fun loadCategories() {
+    fun loadCategories() {
         viewModelScope.launch {
             try {
                 recipeRepository.getCategories().collect { categories ->

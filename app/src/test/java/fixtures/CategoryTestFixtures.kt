@@ -14,4 +14,8 @@ object CategoryTestFixtures {
         description = description,
         imageUrl = imageUrl,
     )
+
+    fun CreateCategoriesDtoList(count: Int = 3) = List(count) { index ->
+        createCategoryDto(id = index + 1, title = "Категория ${index + 1}")
+    }
 }
