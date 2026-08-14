@@ -14,7 +14,7 @@ import ru.fryct999.recipecomposeapp.features.categories.presentation.model.Categ
 import ru.fryct999.recipecomposeapp.features.categories.presentation.model.CategoryUiModel
 
 @RunWith(AndroidJUnit4::class)
-class CategoriesContentTest {
+class CategoriesScreenTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 

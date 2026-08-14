@@ -13,7 +13,7 @@ import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.RecipeUi
 import ru.fryct999.recipecomposeapp.features.recipes.presentation.model.RecipesUiState
 
 @RunWith(AndroidJUnit4::class)
-class RecipesContentTest {
+class RecipesScreenTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
