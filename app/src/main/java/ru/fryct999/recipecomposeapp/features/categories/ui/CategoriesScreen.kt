@@ -16,11 +16,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import ru.fryct999.recipecomposeapp.R
 import ru.fryct999.recipecomposeapp.core.ui.ScreenHeader
 import ru.fryct999.recipecomposeapp.features.categories.presentation.CategoriesViewModel
+import ru.fryct999.recipecomposeapp.features.categories.presentation.model.CategoriesUiState
 import ru.fryct999.recipecomposeapp.ui.theme.Dimens.padding16
 
 @Composable
@@ -29,9 +31,16 @@ fun CategoriesScreen(
     modifier: Modifier = Modifier,
 ) {
     val viewModel: CategoriesViewModel = hiltViewModel()
-
     val uiState by viewModel.uiState.collectAsState()
+    CategoriesContent(uiState = uiState, onCategoryClick = onCategoryClick, modifier = modifier)
+}
 
+@Composable
+fun CategoriesContent(
+    uiState: CategoriesUiState,
+    onCategoryClick: (Int, String, String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Column(
         modifier = modifier
     ) {
@@ -46,7 +55,7 @@ fun CategoriesScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(modifier = Modifier.testTag("loading_indicator"))
             }
         } else if (uiState.error != null) {
             Box(
@@ -56,6 +65,7 @@ fun CategoriesScreen(
                 Text(
                     text = uiState.error ?: "Непредвиденная ошибка",
                     style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.testTag("error_message"),
                 )
             }
         } else {
@@ -68,7 +78,13 @@ fun CategoriesScreen(
                 items(uiState.categories, key = { it.id }) { category ->
                     CategoryItem(
                         category = category,
-                        onClick = { onCategoryClick(category.id, category.title, category.imageUrl) },
+                        onClick = {
+                            onCategoryClick(
+                                category.id,
+                                category.title,
+                                category.imageUrl
+                            )
+                        },
                     )
                 }
             }
