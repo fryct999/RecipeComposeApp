@@ -86,9 +86,10 @@ dependencies {
     // Unit тесты (JVM)
     testImplementation(libs.junit)
     testImplementation(libs.junit.jupiter)
-    testImplementation(libs.mockk)
+    testImplementation(libs.mockk.android)
     testImplementation(libs.coroutines.test)
     testImplementation(libs.turbine)
+    testImplementation(libs.mockwebserver)
 
     // Android UI тесты
     androidTestImplementation(libs.androidx.junit)
@@ -100,4 +101,16 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+
+    // Integration test
+    androidTestImplementation(libs.mockwebserver)
+    androidTestImplementation(libs.room.testing)
+    androidTestImplementation(libs.hilt.android.testing)
+    androidTestImplementation(libs.coroutines.test)
+    androidTestImplementation(libs.mockk.android)
+    androidTestImplementation(libs.turbine)
+    kspAndroidTest(libs.hilt.compiler)
+
+    implementation(libs.coroutines.core)
+
 }
