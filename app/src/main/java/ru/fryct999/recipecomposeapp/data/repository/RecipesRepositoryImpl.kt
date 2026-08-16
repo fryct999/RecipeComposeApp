@@ -31,12 +31,17 @@ class RecipesRepositoryImpl @Inject constructor(
             categoryDao.getAllCategories().first().map { it.toDto() }
         )
 
-        val fresh = recipesApiService.getCategories()
-        categoryDao.insertCategories(fresh.map { it.toEntity() })
+        try {
+            val fresh = recipesApiService.getCategories()
+            categoryDao.insertCategories(fresh.map { it.toEntity() })
 
-        emit(
-            categoryDao.getAllCategories().first().map { it.toDto() }
-        )
+            emit(
+                categoryDao.getAllCategories().first().map { it.toDto() }
+            )
+            Log.d(TAG, "Обновлено ${fresh.size} категорий")
+        } catch (e: Exception) {
+            Log.e(TAG, "Ошибка обновления: ${e.message}", e)
+        }
     }.flowOn(Dispatchers.IO)
 
     override fun getRecipe(recipeId: Int): Flow<RecipeDto?> {
