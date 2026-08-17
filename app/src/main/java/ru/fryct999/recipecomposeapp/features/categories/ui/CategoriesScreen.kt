@@ -43,6 +43,7 @@ fun CategoriesContent(
 ) {
     Column(
         modifier = modifier
+            .testTag("categories_screen"),
     ) {
         ScreenHeader(
             painter = painterResource(id = R.drawable.img_ervar2),
@@ -74,6 +75,7 @@ fun CategoriesContent(
                 contentPadding = PaddingValues(padding16),
                 horizontalArrangement = Arrangement.spacedBy(padding16),
                 verticalArrangement = Arrangement.spacedBy(padding16),
+                modifier = Modifier.testTag("categories_grid")
             ) {
                 items(uiState.categories, key = { it.id }) { category ->
                     CategoryItem(
@@ -85,6 +87,7 @@ fun CategoriesContent(
                                 category.imageUrl
                             )
                         },
+                        modifier = Modifier.testTag("category_item")
                     )
                 }
             }

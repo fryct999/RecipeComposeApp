@@ -40,6 +40,7 @@ fun RecipesContent(
 ) {
     Column(
         modifier = modifier
+            .testTag("recipes_screen"),
     ) {
         ScreenHeader(
             painter = rememberAsyncImagePainter(uiState.categoryImageUrl),
