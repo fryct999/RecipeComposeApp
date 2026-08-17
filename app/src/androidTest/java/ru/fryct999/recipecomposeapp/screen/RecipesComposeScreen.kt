@@ -1,4 +1,4 @@
-package ru.fryct999.recipecomposeapp.features.recipes.ui
+package ru.fryct999.recipecomposeapp.screen
 
 import androidx.compose.ui.test.SemanticsNodeInteractionsProvider
 import io.github.kakaocup.compose.node.element.ComposeScreen

@@ -1,21 +1,17 @@
-package ru.fryct999.recipecomposeapp.features.categories.ui
+package ru.fryct999.recipecomposeapp.e2e
 
-import androidx.compose.ui.test.SemanticsNodeInteractionsProvider
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.kaspersky.components.composesupport.config.withComposeSupport
 import com.kaspersky.kaspresso.kaspresso.Kaspresso
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
-import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.github.kakaocup.compose.node.element.ComposeScreen.Companion.onComposeScreen
-import io.github.kakaocup.compose.node.element.KNode
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import ru.fryct999.recipecomposeapp.MainActivity
-import ru.fryct999.recipecomposeapp.features.recipes.ui.RecipesComposeScreen
-
+import ru.fryct999.recipecomposeapp.screen.CategoriesComposeScreen
+import ru.fryct999.recipecomposeapp.screen.RecipesComposeScreen
 
 @RunWith(AndroidJUnit4::class)
 class CategoriesE2ETest : TestCase(
@@ -38,7 +34,7 @@ class CategoriesE2ETest : TestCase(
     fun clickingCategoryOpensRecipesScreen() = run {
         step("Дождаться загрузки категорий") {
             onComposeScreen<CategoriesComposeScreen>(composeTestRule) {
-                categoriesGrid { isDisplayed() }
+                categoriesGrid { assertIsDisplayed() }
                 loadingIndicator { assertIsNotDisplayed() }
             }
         }
@@ -55,14 +51,4 @@ class CategoriesE2ETest : TestCase(
             }
         }
     }
-}
-
-class CategoriesComposeScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
-    ComposeScreen<CategoriesComposeScreen>(
-        semanticsProvider = semanticsProvider,
-        viewBuilderAction = { hasTestTag("categories_screen") },
-    ) {
-    val loadingIndicator: KNode = child { hasTestTag("loading_indicator") }
-    val categoriesGrid: KNode = child { hasTestTag("categories_grid") }
-    val categoryItem: KNode = child { hasTestTag("category_item") }
 }
