@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import ru.fryct999.recipecomposeapp.core.ui.RecipeImage
@@ -33,7 +34,8 @@ fun CategoryItem(
     Card(
         onClick = onClick,
         modifier = modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .testTag("category_item"),
         elevation = CardDefaults.cardElevation(defaultElevation = shadow),
         shape = shape,
 
