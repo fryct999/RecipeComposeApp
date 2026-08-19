@@ -123,3 +123,32 @@ dependencies {
     androidTestImplementation(libs.kaspresso.compose)
 }
 
+tasks.register<JacocoReport>("jacocoTestReport") {
+    dependsOn("testDebugUnitTest")
+
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+
+    val kotlinClasses =
+        layout.buildDirectory.dir("intermediates/built_in_kotlinc/debug/compileDebugKotlin/classes")
+    classDirectories.setFrom(fileTree(kotlinClasses) {
+        exclude(
+            "**/BuildConfig*",
+            "**/R.class",
+            "**/R$*.class",
+            "**/di/**",
+            "**/ui/theme/**",
+            "**/navigation/**",
+            "**/data/database/dao/**",
+            "**/hilt_aggregated_deps/**",
+            "**/dagger/hilt/**",
+            "**/features/**/ui/**",
+        )
+    })
+    sourceDirectories.setFrom(files("src/main/java", "src/main/kotlin"))
+    executionData.setFrom(fileTree(layout.buildDirectory) {
+        include("outputs/unit_test_code_coverage/**/*.exec")
+    })
+}
