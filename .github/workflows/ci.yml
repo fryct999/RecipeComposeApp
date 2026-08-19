@@ -90,6 +90,9 @@ jobs:
       - name: Accept Android SDK licenses
         run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
       - name: Check KVM
         run: ls -la /dev/kvm
 
@@ -99,7 +102,7 @@ jobs:
           api-level: 34
           target: aosp_atd
           arch: x86_64
-          timeout: 30
+          emulator-boot-timeout: 30
           script: ./gradlew connectedDebugAndroidTest
 
       - name: Upload test reports
