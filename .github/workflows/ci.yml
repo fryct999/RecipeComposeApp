@@ -73,7 +73,7 @@ jobs:
           path: app/build/outputs/apk/debug/
 
   instrumented-tests:
-    runs-on: macos-latest  # macOS для эмулятора
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v5
